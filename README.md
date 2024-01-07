@@ -1,2 +1,0 @@
-# Spring-skillbox
-skillbox homeworks

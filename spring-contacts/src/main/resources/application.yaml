@@ -1,0 +1,8 @@
+app:
+  path: src/main/resources/default-contacts.txt
+  helpMessage: "Commands - help,  all,  get,  add,  delete,  exit"
+
+spring:
+  profiles:
+    active: init
+

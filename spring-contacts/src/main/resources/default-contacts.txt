@@ -1,0 +1,5 @@
+Ivanov Ivan Ivanovich;+890999999;someEmail@example.com
+Petrov Petr Petrovich;+890999991;someEmail2@example.com
+Sid Sod Sad;+8921874526;mail@mail.ru
+Петров Петр Петрович;+895412568;mail@ma.ru
+Sergeev Sergey Sergeevich;+8796521454;ma@ma.ru
