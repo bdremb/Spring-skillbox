@@ -2,7 +2,6 @@ package ru.learn.skillbox.service;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import ru.learn.skillbox.model.ContactStorage;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -18,10 +17,10 @@ public class InitService {
     @Value("${spring.profiles.active}")
     private String activeProfile;
 
-    private final ContactStorage contactStorage;
+    private final ContactStorageService contactStorage;
     private final String filename;
 
-    public InitService(ContactStorage contactStorage, String filename) {
+    public InitService(ContactStorageService contactStorage, String filename) {
         this.contactStorage = contactStorage;
         this.filename = filename;
     }

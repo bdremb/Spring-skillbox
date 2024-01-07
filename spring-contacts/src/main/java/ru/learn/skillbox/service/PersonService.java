@@ -2,7 +2,6 @@ package ru.learn.skillbox.service;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import ru.learn.skillbox.model.ContactStorage;
 
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
@@ -24,10 +23,10 @@ public class PersonService {
     @Value("${app.helpMessage}")
     private String helpMessage;
 
-    private final ContactStorage contactStorage;
+    private final ContactStorageService contactStorage;
     private final String filename;
 
-    public PersonService(ContactStorage contacts, String filename) {
+    public PersonService(ContactStorageService contacts, String filename) {
         this.contactStorage = contacts;
         this.filename = filename;
     }

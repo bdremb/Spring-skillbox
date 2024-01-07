@@ -1,6 +1,7 @@
-package ru.learn.skillbox.model;
+package ru.learn.skillbox.service;
 
 import org.springframework.stereotype.Service;
+import ru.learn.skillbox.model.Person;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,13 +10,13 @@ import static java.lang.System.out;
 import static java.text.MessageFormat.format;
 
 @Service
-public class ContactStorage {
+public class ContactStorageService {
 
     private final Map<String, Person> contactsMap;
     public static final String EMAIL_PATTERN = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
     public static final String PHONE_PATTERN = "^\\+?[1-9][0-9]{7,14}$";
 
-    public ContactStorage() {
+    public ContactStorageService() {
         this.contactsMap = new HashMap<>();
     }
 
