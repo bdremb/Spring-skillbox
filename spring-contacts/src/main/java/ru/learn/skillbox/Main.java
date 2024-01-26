@@ -9,7 +9,6 @@ public class Main {
 
     public static void main(String[] args) {
         ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
-
         PersonService personService = context.getBean(PersonService.class);
         personService.start();
     }
