@@ -28,7 +28,6 @@ ext {
 dependencies {
     implementation 'org.springframework.shell:spring-shell-starter'
     implementation 'org.mapstruct:mapstruct:1.5.5.Final'
-    implementation "javax.annotation:javax.annotation-api:1.3.2"
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
 
     compileOnly 'org.projectlombok:lombok'

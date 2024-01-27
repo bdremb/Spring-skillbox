@@ -1,6 +1,5 @@
 app:
   path: src/main/resources/default-students.txt
-  helpMessage: ""
 
 spring:
   profiles:
