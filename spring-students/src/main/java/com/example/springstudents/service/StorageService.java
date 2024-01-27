@@ -1,9 +1,13 @@
 package com.example.springstudents.service;
 
+import com.example.springstudents.event.AddStudentEvent;
+import com.example.springstudents.event.DeleteStudentEvent;
 import com.example.springstudents.mapper.StudentMapper;
 import com.example.springstudents.model.Student;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
@@ -18,26 +22,33 @@ import static java.util.Objects.nonNull;
 @Slf4j
 @ShellComponent
 @RequiredArgsConstructor
-public class StorageService {
+public class StorageService implements ApplicationEventPublisherAware {
 
     private final Map<Integer, Student> studentMap = new HashMap<>();
     private final StudentMapper mapper;
+    protected ApplicationEventPublisher applicationEventPublisher;
+
+    @Override
+    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
+    }
 
     @ShellMethod(key = "add", value = "Add new student. Example: add --f first name --l last name --age how old is the student")
-    public String addStudent(
+    public Student addStudent(
             @ShellOption("f") String firstName,
             @ShellOption("l") String lastName,
             String age
     ) {
         Student student = mapper.toStudent(firstName, lastName, age, getId());
         studentMap.put(student.getStudentId(), student);
-        return MessageFormat.format("Added new student: {0}", student);
+        applicationEventPublisher.publishEvent(new AddStudentEvent(student));
+        return student;
     }
 
     @ShellMethod(key = "delete", value = "Delete student by id. Example: delete --id (student id)")
-    public String deleteContact(Integer id) {
+    public void deleteContact(Integer id) {
         studentMap.remove(id);
-        return MessageFormat.format("Deleted student with id: {0}", id);
+        applicationEventPublisher.publishEvent(new DeleteStudentEvent(id));
     }
 
     @ShellMethod(key = "delete all", value = "Deleted all students")

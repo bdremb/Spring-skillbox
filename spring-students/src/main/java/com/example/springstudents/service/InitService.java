@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +17,7 @@ import java.nio.file.Paths;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class InitService {
+public class InitService implements ApplicationEventPublisherAware {
 
     @Value("${spring.profiles.active}")
     private String activeProfile;
@@ -24,6 +26,11 @@ public class InitService {
     private String filename;
 
     private final StorageService storageService;
+    protected ApplicationEventPublisher applicationEventPublisher;
+    @Override
+    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
+    }
 
     @EventListener(ApplicationStartedEvent.class)
     public void initStudents() {
@@ -32,7 +39,7 @@ public class InitService {
                 Files.readAllLines(Paths.get(filename), Charset.defaultCharset())
                         .forEach(str -> {
                             String[] data = str.split(";");
-                            storageService.addStudent(data[0], data[1], data[2]);
+                            applicationEventPublisher.publishEvent(storageService.addStudent(data[0], data[1], data[2]));
                         });
                 log.info("Список студентов по умолчанию инициализирован!");
             } catch (IOException e) {
