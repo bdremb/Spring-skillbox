@@ -39,7 +39,7 @@ public class InitService implements ApplicationEventPublisherAware {
                 Files.readAllLines(Paths.get(filename), Charset.defaultCharset())
                         .forEach(str -> {
                             String[] data = str.split(";");
-                            applicationEventPublisher.publishEvent(storageService.addStudent(data[0], data[1], data[2]));
+                            storageService.addStudent(data[0], data[1], data[2]);
                         });
                 log.info("Список студентов по умолчанию инициализирован!");
             } catch (IOException e) {

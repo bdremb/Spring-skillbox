@@ -34,7 +34,7 @@ public class StorageService implements ApplicationEventPublisherAware {
     }
 
     @ShellMethod(key = "add", value = "Add new student. Example: add --f first name --l last name --age how old is the student")
-    public Student addStudent(
+    public void addStudent(
             @ShellOption("f") String firstName,
             @ShellOption("l") String lastName,
             String age
@@ -42,7 +42,6 @@ public class StorageService implements ApplicationEventPublisherAware {
         Student student = mapper.toStudent(firstName, lastName, age, getId());
         studentMap.put(student.getStudentId(), student);
         applicationEventPublisher.publishEvent(new AddStudentEvent(student));
-        return student;
     }
 
     @ShellMethod(key = "delete", value = "Delete student by id. Example: delete --id (student id)")
