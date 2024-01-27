@@ -1,6 +1,10 @@
+logging:
+  level:
+    ROOT: INFO
+
 app:
-  path: src/main/resources/default-students.txt
+  path: ${TXT_FILE_PATH:src/main/resources/default-students.txt}
 
 spring:
   profiles:
-    active: init
+    active: ${PROFILE:init}

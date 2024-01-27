@@ -1,11 +1,9 @@
 package com.example.springstudents.service;
 
+import com.example.springstudents.event.InitStudentsEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
@@ -13,38 +11,28 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class InitService implements ApplicationEventPublisherAware {
-
-    @Value("${spring.profiles.active}")
-    private String activeProfile;
+public class InitService {
 
     @Value("${app.path}")
     private String filename;
 
-    private final StorageService storageService;
-    protected ApplicationEventPublisher applicationEventPublisher;
-    @Override
-    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
-        this.applicationEventPublisher = applicationEventPublisher;
-    }
+    private final StudentService storageService;
 
-    @EventListener(ApplicationStartedEvent.class)
-    public void initStudents() {
-        if (activeProfile.equals("init")) {
-            try {
-                Files.readAllLines(Paths.get(filename), Charset.defaultCharset())
-                        .forEach(str -> {
-                            String[] data = str.split(";");
-                            storageService.addStudent(data[0], data[1], data[2]);
-                        });
-                log.info("Список студентов по умолчанию инициализирован!");
-            } catch (IOException e) {
-                log.error(e.getMessage());
-            }
+    @EventListener(InitStudentsEvent.class)
+    private void initStudents() {
+        try {
+            Files.readAllLines(Paths.get(filename), Charset.defaultCharset())
+                    .forEach(str -> {
+                        String[] data = str.split(";");
+                        storageService.addStudent(data[0], data[1], data[2]);
+                    });
+        } catch (IOException e) {
+            log.error(Arrays.toString(e.getStackTrace()));
         }
     }
 
