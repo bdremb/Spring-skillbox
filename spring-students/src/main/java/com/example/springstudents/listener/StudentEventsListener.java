@@ -14,6 +14,6 @@ public class StudentEventsListener {
 
     @EventListener({AddStudentEvent.class, DeleteStudentEvent.class, InitStudentsEvent.class})
     void handleStudentEvents(ApplicationEvent event) {
-        log.info(event.toString());
+        System.out.println(event);
     }
 }

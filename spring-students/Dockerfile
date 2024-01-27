@@ -9,6 +9,7 @@ CMD ["java", "-jar", "app.jar"]
 
 ENV PROFILE=init
 ENV TXT_FILE_PATH=students.txt
+ENV SOCKET_SERVER_PORT=8888
 
 # выполнить в терминале
 # docker build -t spring-students .
