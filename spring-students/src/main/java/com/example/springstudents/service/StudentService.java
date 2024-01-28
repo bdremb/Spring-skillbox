@@ -33,7 +33,7 @@ public class StudentService implements ApplicationEventPublisherAware {
 
     private final Map<Integer, Student> studentMap = new HashMap<>();
     private final StudentMapper mapper;
-    protected ApplicationEventPublisher applicationEventPublisher;
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @Override
     public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {

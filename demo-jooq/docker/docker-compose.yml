@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:12.3
+#    используем Postgres DB на локальном порту 5434
+    ports:
+      - "5434:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=tasks
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+# для запуска файла выполнить команду в терминале:
+#  cd docker
+# docker compose up
+
