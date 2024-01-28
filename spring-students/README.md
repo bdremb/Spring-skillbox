@@ -3,6 +3,16 @@
 
 Приложение запускается посредством запуска метода main в классе SpringStudentsApplication.
 
+Для запуска в docker:
+
+Выполнить в терминале
+
+docker build -t spring-students .
+
+Для работы терминала в docker команда должна быть такая
+
+docker run -it -p 8888:8888 spring-students
+
 AVAILABLE COMMANDS
 
     help: Display help about available commands
