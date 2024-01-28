@@ -1,21 +1,15 @@
 # 2.7 Практическая работа
 # Консольное приложение «Учёт студентов»
 
-Приложение запускается посредством запуска метода main в классе SpringStudentsApplication.
+## Приложение запускается посредством запуска метода main в классе SpringStudentsApplication.
 
-Для запуска в docker:
-
-Выполнить в терминале
-
-docker build -t spring-students .
-
-Для работы терминала в docker команда должна быть такая
-
-docker run -it --rm  spring-students
-
-Для старта без инициализации студентов указать профиль, отличный от "init" (init стоит по умолчанию)
-
-docker run -it --rm -e PROFILE=local spring-students
+## Для запуска в docker:
+## Выполнить в терминале
+### docker build -t spring-students .
+## Для работы терминала в docker команда должна быть такая
+### docker run -it --rm  spring-students
+## Для старта без инициализации студентов указать профиль, отличный от "init" (init стоит по умолчанию)
+### docker run -it --rm -e PROFILE=local spring-students
 
 AVAILABLE COMMANDS
 
