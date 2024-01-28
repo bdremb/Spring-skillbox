@@ -13,6 +13,10 @@ docker build -t spring-students .
 
 docker run -it --rm  spring-students
 
+Для старта без инициализации студентов указать профиль, отличный от "init" (init стоит по умолчанию)
+
+docker run -it --rm -e PROFILE=local spring-students
+
 AVAILABLE COMMANDS
 
     help: Display help about available commands
