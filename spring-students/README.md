@@ -11,7 +11,7 @@ docker build -t spring-students .
 
 Для работы терминала в docker команда должна быть такая
 
-docker run -it -p 8888:8888 spring-students
+docker run -it --rm  spring-students
 
 AVAILABLE COMMANDS
 

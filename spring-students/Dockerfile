@@ -16,3 +16,4 @@ ENV SOCKET_SERVER_PORT=8888
 
 # для работы терминала в docker команда должна быть такая
 # docker run -it -p 8888:8888 spring-students
+# или  docker run -it --rm  spring-students
