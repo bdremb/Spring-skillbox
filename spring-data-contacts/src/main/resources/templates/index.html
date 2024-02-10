@@ -34,7 +34,8 @@
 <br/><br/>
 <form action="/contact/edit" method="post">
 
-    <button href="/">CLEAR FORM</button> <br/> <br/>
+    <button th:href="@{/}">CLEAR FORM</button>
+    <br/> <br/>
     <input type="hidden" name="id" th:value="${contact.id}"/>
 
     <div>
