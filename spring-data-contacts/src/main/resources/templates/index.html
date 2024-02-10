@@ -12,10 +12,10 @@
 <table>
     <thead>
     <th>ID</th>
-    <th>FirstName</th>
-    <th>LastName</th>
-    <th>Email</th>
-    <th>Phone</th>
+    <th>First name</th>
+    <th>Last name</th>
+    <th>E-mail</th>
+    <th>Phone number</th>
     </thead>
     <tbody>
     <tr th:each="contact : ${contacts}">
@@ -34,28 +34,28 @@
 <br/><br/>
 <form action="/contact/edit" method="post">
 
+    <button href="/">CLEAR FORM</button> <br/> <br/>
     <input type="hidden" name="id" th:value="${contact.id}"/>
 
     <div>
-        <label for="first_name">FirstName</label>
+        <label for="first_name">First Name</label>
         <input type="text" id="first_name" name="firstName" required th:value="${contact.firstName}"/>
     </div>
     <div>
-        <label for="last_name">LastName</label>
+        <label for="last_name">Last Name</label>
         <input type="text" id="last_name" name="lastName" required th:value="${contact.lastName}"/>
     </div>
     <div>
-        <label for="e-mail">email</label>
+        <label for="e-mail">e-mail</label>
         <input type="text" id="e-mail" name="email" required th:value="${contact.email}"/>
     </div>
     <div>
-        <label for="phone-number">phone</label>
+        <label for="phone-number">phone number</label>
         <input type="text" id="phone-number" name="phone" required th:value="${contact.phone}"/>
     </div>
     <button type="submit">CREATE/UPDATE</button>
 </form>
 
-<!--<a href="/contact/create">Create Contact</a>-->
 </body>
 
 </html>
