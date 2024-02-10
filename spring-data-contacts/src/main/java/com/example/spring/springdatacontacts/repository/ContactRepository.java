@@ -18,6 +18,4 @@ public interface ContactRepository {
 
     void deleteById(Long id);
 
-    void batchInsert(List<Contact> contacts);
-
 }

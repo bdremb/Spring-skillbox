@@ -30,8 +30,8 @@ public class ContactController {
     public String update(@PathVariable Long id, Model model) {
         Contact contact = contactService.getById(id);
         if (nonNull(contact)) {
-            model.addAttribute("contact", contact);
             model.addAttribute("contacts", contactService.findAll());
+            model.addAttribute("contact", contact);
             return "index";
         }
         return "index";

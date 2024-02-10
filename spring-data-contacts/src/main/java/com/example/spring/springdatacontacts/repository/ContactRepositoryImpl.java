@@ -8,11 +8,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
-import org.jooq.Query;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -68,31 +66,6 @@ public class ContactRepositoryImpl implements ContactRepository {
         dslContext.deleteFrom(CONTACT)
                 .where(CONTACT.ID.eq(id))
                 .execute();
-    }
-
-    @Override
-    public void batchInsert(List<Contact> contacts) {
-        List<Query> insertQueries = new ArrayList<>();
-
-        for (Contact contact : contacts) {
-            insertQueries.add(
-                    dslContext.insertInto(
-                            CONTACT,
-                            CONTACT.ID,
-                            CONTACT.FIRST_NAME,
-                            CONTACT.LAST_NAME,
-                            CONTACT.EMAIL,
-                            CONTACT.PHONE
-                    ).values(
-                            contact.getId(),
-                            contact.getFirstName(),
-                            contact.getLastName(),
-                            contact.getEmail(),
-                            contact.getPhone()
-                    )
-            );
-        }
-        dslContext.batch(insertQueries).execute();
     }
 
 }

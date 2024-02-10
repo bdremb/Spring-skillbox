@@ -54,7 +54,7 @@ jooq {
                 logging = Logging.WARN
                 jdbc.apply {
                     driver = "org.postgresql.Driver"
-                    url = "jdbc:postgresql://localhost:5434/contacts"
+                    url = "jdbc:postgresql://localhost:5434/contacts_db"
                     user = "postgres"
                     password = "postgres"
                 }

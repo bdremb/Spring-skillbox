@@ -40,8 +40,4 @@ public class ContactServiceImpl implements ContactService {
         repository.deleteById(id);
     }
 
-    @Override
-    public void batchInsert(List<Contact> contacts) {
-        repository.batchInsert(contacts);
-    }
 }

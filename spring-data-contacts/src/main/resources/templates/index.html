@@ -25,8 +25,12 @@
         <td th:text="${contact.email}">*</td>
         <td th:text="${contact.phone}">*</td>
         <td>
-            <a th:href="@{/contact/update/{id}(id=${contact.id})}">Edit</a>
-            <a th:href="@{/contact/delete/{id}(id=${contact.id})}">Delete</a>
+            <th>
+                <button th:href="@{/contact/update/{id}(id=${contact.id})}">Edit</button>
+            </th>
+            <th>
+                <button th:href="@{/contact/delete/{id}(id=${contact.id})}">Delete</button>
+            </th>
         </td>
     </tr>
     </tbody>
@@ -48,7 +52,7 @@
     </div>
     <div>
         <label for="e-mail">e-mail</label>
-        <input type="text" id="e-mail" name="email" required th:value="${contact.email}"/>
+        <input type="email" id="e-mail" name="email" required th:value="${contact.email}"/>
     </div>
     <div>
         <label for="phone-number">phone number</label>
