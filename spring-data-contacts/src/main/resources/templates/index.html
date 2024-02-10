@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Contact Management</title>
+</head>
+
+<body>
+<h1>Contact Management</h1>
+
+<table>
+    <thead>
+    <th>ID</th>
+    <th>FirstName</th>
+    <th>LastName</th>
+    <th>Email</th>
+    <th>Phone</th>
+    </thead>
+    <tbody>
+    <tr th:each="contact : ${contacts}">
+        <td th:text="${contact.id}">*</td>
+        <td th:text="${contact.firstName}">*</td>
+        <td th:text="${contact.lastName}">*</td>
+        <td th:text="${contact.email}">*</td>
+        <td th:text="${contact.phone}">*</td>
+        <td>
+            <a th:href="@{/contact/update/{id}(id=${contact.id})}">Edit</a>
+            <a th:href="@{/contact/delete/{id}(id=${contact.id})}">Delete</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<br/><br/>
+<form action="/contact/edit" method="post">
+
+    <input type="hidden" name="id" th:value="${contact.id}"/>
+
+    <div>
+        <label for="first_name">FirstName</label>
+        <input type="text" id="first_name" name="firstName" required th:value="${contact.firstName}"/>
+    </div>
+    <div>
+        <label for="last_name">LastName</label>
+        <input type="text" id="last_name" name="lastName" required th:value="${contact.lastName}"/>
+    </div>
+    <div>
+        <label for="e-mail">email</label>
+        <input type="text" id="e-mail" name="email" required th:value="${contact.email}"/>
+    </div>
+    <div>
+        <label for="phone-number">phone</label>
+        <input type="text" id="phone-number" name="phone" required th:value="${contact.phone}"/>
+    </div>
+    <button type="submit">CREATE/UPDATE</button>
+</form>
+
+<!--<a href="/contact/create">Create Contact</a>-->
+</body>
+
+</html>
