@@ -8,6 +8,8 @@ public interface CommentService {
 
     List<Comment> findAll();
 
+    Long countByNewsId(Long newsId);
+
     Comment findById(Long id);
 
     Comment save(Comment client);

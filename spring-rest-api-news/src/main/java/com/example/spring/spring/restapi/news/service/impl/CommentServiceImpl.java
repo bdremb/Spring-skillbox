@@ -16,7 +16,12 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<Comment> findAll() {
-        return null;
+        return commentRepository.findAll();
+    }
+
+    @Override
+    public Long countByNewsId(Long newsId) {
+        return commentRepository.countByNewsItemId(newsId);
     }
 
     @Override

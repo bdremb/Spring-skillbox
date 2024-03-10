@@ -62,4 +62,6 @@ public class NewsItem {
     @UpdateTimestamp
     private Instant updatedAt;
 
+    private Long commentsCount;
+
 }
