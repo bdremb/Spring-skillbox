@@ -1,18 +1,19 @@
 package com.example.spring.spring.restapi.news.service;
 
 import com.example.spring.spring.restapi.news.model.NewsFilter;
-import com.example.spring.spring.restapi.news.model.NewsItem;
+import com.example.spring.spring.restapi.news.web.model.request.NewsItemRequest;
+import com.example.spring.spring.restapi.news.web.model.response.NewsItemResponse;
 
 import java.util.List;
 
 public interface NewsService {
-    List<NewsItem> findAll(NewsFilter filter);
+    List<NewsItemResponse> findAll(NewsFilter filter);
 
-    NewsItem findById(Long id);
+    NewsItemResponse findById(Long id);
 
-    NewsItem save(NewsItem client);
+    NewsItemResponse create(String userName, NewsItemRequest client);
 
-    NewsItem update(NewsItem client);
+    NewsItemResponse update(Long id, String userName, NewsItemRequest client);
 
-    void deleteById(Long id);
+    void deleteById(Long id, String userName);
 }

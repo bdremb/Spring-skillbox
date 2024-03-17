@@ -9,9 +9,11 @@ public interface UserService {
 
     User findById(Long id);
 
-    User save(User client);
+    User findByName(String userName);
 
-    User update(User client);
+    User save(User user);
+
+    User update(User user);
 
     void deleteById(Long id);
 }

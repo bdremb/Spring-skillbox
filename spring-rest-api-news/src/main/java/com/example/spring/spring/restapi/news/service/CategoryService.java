@@ -10,6 +10,8 @@ public interface CategoryService {
 
     NewsCategory findById(Long id);
 
+    NewsCategory findByName(String categoryName);
+
     NewsCategory save(NewsCategory client);
 
     NewsCategory update(NewsCategory client);

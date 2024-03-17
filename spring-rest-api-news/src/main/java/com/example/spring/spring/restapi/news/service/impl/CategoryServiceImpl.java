@@ -24,6 +24,11 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public NewsCategory findByName(String categoryName) {
+        return null;
+    }
+
+    @Override
     public NewsCategory save(NewsCategory client) {
         return null;
     }
