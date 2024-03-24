@@ -11,7 +11,11 @@ import java.util.List;
 
 import static java.util.Objects.nonNull;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = {CommentMapper.class})
+@Mapper(
+        componentModel = "spring",
+        unmappedTargetPolicy = ReportingPolicy.IGNORE,
+        uses = {CommentMapper.class, UserMapper.class}
+)
 public interface NewsItemMapper {
 
     NewsItem toModel(NewsItemRequest request);

@@ -1,5 +1,7 @@
 package com.example.spring.spring.restapi.news.web.controller.v1;
 
+import com.example.spring.spring.restapi.news.aop.EntityType;
+import com.example.spring.spring.restapi.news.aop.OwnerVerification;
 import com.example.spring.spring.restapi.news.model.NewsFilter;
 import com.example.spring.spring.restapi.news.service.NewsService;
 import com.example.spring.spring.restapi.news.web.model.request.NewsItemRequest;
@@ -43,6 +45,7 @@ public class NewsController {
     }
 
     @PutMapping("/{id}/user/{userName}")
+    @OwnerVerification(entityType = EntityType.NEWS)
     public ResponseEntity<NewsItemResponse> update(
             @PathVariable("id") Long newsItemId,
             @PathVariable String userName,
@@ -52,8 +55,9 @@ public class NewsController {
     }
 
     @DeleteMapping("/{id}/user/{userName}")
+    @OwnerVerification(entityType = EntityType.NEWS)
     public ResponseEntity<Void> delete(@PathVariable Long id, @PathVariable String userName) {
-        newsService.deleteById(id, userName);
+        newsService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 

@@ -15,5 +15,5 @@ public interface NewsService {
 
     NewsItemResponse update(Long id, String userName, NewsItemRequest client);
 
-    void deleteById(Long id, String userName);
+    void deleteById(Long id);
 }

@@ -1,19 +1,20 @@
 package com.example.spring.spring.restapi.news.service;
 
 import com.example.spring.spring.restapi.news.model.User;
+import com.example.spring.spring.restapi.news.web.model.response.UserResponse;
 
 import java.util.List;
 
 public interface UserService {
-    List<User> findAll();
+    List<UserResponse> findAll();
 
-    User findById(Long id);
+    UserResponse findById(Long id);
 
-    User findByName(String userName);
+    UserResponse findByName(String userName);
 
-    User save(User user);
+    UserResponse save(User user);
 
-    User update(User user);
+    UserResponse update(User user);
 
     void deleteById(Long id);
 }

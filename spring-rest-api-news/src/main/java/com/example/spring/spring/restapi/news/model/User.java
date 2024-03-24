@@ -3,6 +3,7 @@ package com.example.spring.spring.restapi.news.model;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -35,20 +36,20 @@ public class User {
     @Column(name = "user_name")
     private String name;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
     @Builder.Default
     private List<NewsItem> newsItems = new ArrayList<>();
 
-    public void addNewsItem(NewsItem order) {
+    public void addNewsItem(NewsItem newsItem) {
         if(newsItems == null) {
             newsItems = new ArrayList<>();
         }
-        newsItems.add(order);
+        newsItems.add(newsItem);
     }
 
     public void removeNewsItem(Long newsItemId) {
-        newsItems = newsItems.stream().filter(order -> !order.getId().equals(newsItemId)).collect(Collectors.toList());
+        newsItems = newsItems.stream().filter(newsItem -> !newsItem.getId().equals(newsItemId)).collect(Collectors.toList());
     }
 
 }

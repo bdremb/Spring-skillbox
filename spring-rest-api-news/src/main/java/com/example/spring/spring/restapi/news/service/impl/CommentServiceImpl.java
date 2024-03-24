@@ -1,22 +1,28 @@
 package com.example.spring.spring.restapi.news.service.impl;
 
+import com.example.spring.spring.restapi.news.exception.EntityNotFoundException;
+import com.example.spring.spring.restapi.news.mapper.CommentMapper;
 import com.example.spring.spring.restapi.news.model.Comment;
 import com.example.spring.spring.restapi.news.repository.CommentRepository;
 import com.example.spring.spring.restapi.news.service.CommentService;
+import com.example.spring.spring.restapi.news.web.model.response.CommentResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static java.text.MessageFormat.format;
 
 @Service
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
+    private final CommentMapper commentMapper;
 
     @Override
-    public List<Comment> findAll() {
-        return commentRepository.findAll();
+    public List<CommentResponse> findAll() {
+        return commentMapper.toResponseList(commentRepository.findAll());
     }
 
     @Override
@@ -25,22 +31,27 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Comment findById(Long id) {
+    public CommentResponse findById(Long id) {
+        return commentMapper.toResponse(getCommentOrFail(id));
+    }
+
+    @Override
+    public CommentResponse save(Comment client) {
         return null;
     }
 
     @Override
-    public Comment save(Comment client) {
-        return null;
-    }
-
-    @Override
-    public Comment update(Comment client) {
+    public CommentResponse update(Comment client) {
         return null;
     }
 
     @Override
     public void deleteById(Long id) {
 
+    }
+
+    private Comment getCommentOrFail(Long id) {
+        return commentRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(format("NewsItem with id={0} not found", id)));
     }
 }

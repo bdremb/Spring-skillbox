@@ -7,11 +7,11 @@ import com.example.spring.spring.restapi.news.model.NewsFilter;
 import com.example.spring.spring.restapi.news.model.NewsItem;
 import com.example.spring.spring.restapi.news.model.User;
 import com.example.spring.spring.restapi.news.repository.NewsItemRepository;
+import com.example.spring.spring.restapi.news.repository.UserRepository;
 import com.example.spring.spring.restapi.news.repository.specification.NewsItemSpecification;
 import com.example.spring.spring.restapi.news.service.CategoryService;
 import com.example.spring.spring.restapi.news.service.CommentService;
 import com.example.spring.spring.restapi.news.service.NewsService;
-import com.example.spring.spring.restapi.news.service.UserService;
 import com.example.spring.spring.restapi.news.web.model.request.NewsItemRequest;
 import com.example.spring.spring.restapi.news.web.model.response.NewsItemResponse;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,7 @@ public class NewsServiceImpl implements NewsService {
     private final NewsItemRepository newsItemRepository;
     private final NewsItemMapper newsItemMapper;
 
-    private final UserService userService;
+    private final UserRepository userRepository;
     private final CategoryService categoryService;
 
     private final CommentService commentService;
@@ -55,15 +55,14 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     public NewsItemResponse create(String userName, NewsItemRequest request) {
-        User user = userService.findByName(userName);
+        User user = userRepository.findByName(userName).orElse(null);
         if (user == null) {
-            user = userService.save(User.builder().name(userName).build());
+            user = userRepository.save(User.builder().name(userName).build());
         }
         NewsCategory category = categoryService.findByName(request.getCategoryName());
         NewsItem newsItem = newsItemMapper.toModel(request);
         newsItem.setUser(user);
         newsItem.setCategory(category);
-
 
         return newsItemMapper.toResponse(newsItemRepository.save(newsItem));
     }
@@ -76,7 +75,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public void deleteById(Long id, String userName) {
+    public void deleteById(Long id) {
         newsItemRepository.deleteById(id);
     }
 

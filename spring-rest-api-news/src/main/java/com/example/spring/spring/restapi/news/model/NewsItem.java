@@ -51,7 +51,7 @@ public class NewsItem {
     @ToString.Exclude
     private NewsCategory category;
 
-    @OneToMany(mappedBy = "commentText", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
     @ToString.Exclude
     @Builder.Default
     private List<Comment> comments = new ArrayList<>();
