@@ -1,14 +1,14 @@
 package com.example.spring.spring.restapi.news.repository.specification;
 
-import com.example.spring.spring.restapi.news.model.NewsCategory;
-import com.example.spring.spring.restapi.news.model.NewsFilter;
+import com.example.spring.spring.restapi.news.model.Category;
 import com.example.spring.spring.restapi.news.model.NewsItem;
 import com.example.spring.spring.restapi.news.model.User;
+import com.example.spring.spring.restapi.news.web.model.request.NewsFilterRequest;
 import org.springframework.data.jpa.domain.Specification;
 
 public interface NewsItemSpecification {
 
-    static Specification<NewsItem> withFilter(NewsFilter newsFilter) {
+    static Specification<NewsItem> withFilter(NewsFilterRequest newsFilter) {
         return Specification.where(byUserId(newsFilter.getUserId()))
                 .and(byUserName(newsFilter.getUserName()))
                 .and(byCategoryId(newsFilter.getCategoryId()))
@@ -38,7 +38,7 @@ public interface NewsItemSpecification {
             if (categoryId == null) {
                 return null;
             }
-            return criteriaBuilder.equal(root.get(NewsItem.Fields.category).get(NewsCategory.Fields.id), categoryId);
+            return criteriaBuilder.equal(root.get(NewsItem.Fields.category).get(Category.Fields.id), categoryId);
         };
     }
 
@@ -47,7 +47,7 @@ public interface NewsItemSpecification {
             if (categoryName == null) {
                 return null;
             }
-            return criteriaBuilder.equal(root.get(NewsItem.Fields.category).get(NewsCategory.Fields.categoryName), categoryName);
+            return criteriaBuilder.equal(root.get(NewsItem.Fields.category).get(Category.Fields.categoryName), categoryName);
         };
     }
 

@@ -17,7 +17,6 @@ public class OpenApiConfig {
         localhostServer.setUrl("http://localhost:8080");
         localhostServer.setDescription("Local env");
 
-
         Info info = new Info()
                 .title("News API")
                 .version("1.0")

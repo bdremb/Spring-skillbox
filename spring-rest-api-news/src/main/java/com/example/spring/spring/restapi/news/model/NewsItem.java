@@ -49,7 +49,7 @@ public class NewsItem {
     @ManyToOne
     @JoinColumn(name="category_id")
     @ToString.Exclude
-    private NewsCategory category;
+    private Category category;
 
     @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
     @ToString.Exclude

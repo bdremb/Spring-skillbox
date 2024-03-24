@@ -1,11 +1,11 @@
-package com.example.spring.spring.restapi.news.model;
+package com.example.spring.spring.restapi.news.web.model.request;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class NewsFilter {
+public class NewsFilterRequest {
 
     private Integer pageSize;
 

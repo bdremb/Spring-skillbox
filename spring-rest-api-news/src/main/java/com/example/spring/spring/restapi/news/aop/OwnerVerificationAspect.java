@@ -4,14 +4,17 @@ import com.example.spring.spring.restapi.news.exception.EntityNotFoundException;
 import com.example.spring.spring.restapi.news.repository.CommentRepository;
 import com.example.spring.spring.restapi.news.repository.NewsItemRepository;
 import com.example.spring.spring.restapi.news.repository.UserRepository;
+import com.example.spring.spring.restapi.news.web.model.response.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
-import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -19,7 +22,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.Map;
 
-import static java.util.Objects.nonNull;
+import static java.util.Objects.isNull;
 import static org.springframework.web.servlet.HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE;
 
 @Slf4j
@@ -32,37 +35,43 @@ public class OwnerVerificationAspect {
     private final NewsItemRepository newsItemRepository;
     private final UserRepository userRepository;
 
-    @Before("@annotation(OwnerVerification)")
-    public void logBefore(JoinPoint joinPoint) {
+    @Around("@annotation(OwnerVerification)")
+    public Object validateBefore(ProceedingJoinPoint joinPoint) throws Throwable {
         final MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         log.info("Before execution of: {}", methodSignature.getName());
 
         final OwnerVerification annotation = methodSignature.getMethod().getAnnotation(OwnerVerification.class);
-
-        if(!isUserNameMatched(annotation)) {
-            System.err.println("USER NOT OWNER");
+        final Pair<Long, String> entityIdUserName = getRequestedEntityIdUserName(annotation);
+        final EntityType entityType = annotation.entityType();
+        if (isNotUserNameMatched(entityIdUserName, entityType)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(ErrorResponse.builder()
+                            .message(String.format(
+                                    "Forbidden request. User with name = %s is not owner of the %s with id=%d",
+                                    entityIdUserName.getRight(),
+                                    entityType,
+                                    entityIdUserName.getLeft()
+                            )).build());
         }
-
+        return joinPoint.proceed();
     }
 
-    protected boolean isUserNameMatched(OwnerVerification annotation) {
-        EntityType entityType = annotation.entityType();
-        final Pair<Long, Long> entityIdUserId = getEntityIdUserId(annotation);
+    protected boolean isNotUserNameMatched(Pair<Long, String> entityIdUserNamePair, EntityType entityType) {
+        final Pair<Long, Long> entityIdUserId = getEntityIdUserId(entityIdUserNamePair);
         switch (entityType) {
             case NEWS -> {
-                return nonNull(newsItemRepository.findByIdAndUserId(entityIdUserId.getLeft(), entityIdUserId.getRight()));
+                return isNull(newsItemRepository.findByIdAndUserId(entityIdUserId.getLeft(), entityIdUserId.getRight()));
             }
             case COMMENT -> {
-                return nonNull(commentRepository.findByIdAndUserId(entityIdUserId.getLeft(), entityIdUserId.getRight()));
+                return isNull(commentRepository.findByIdAndUserId(entityIdUserId.getLeft(), entityIdUserId.getRight()));
             }
             default -> {
-                return false;
+                return true;
             }
         }
     }
 
-    private Pair<Long, Long> getEntityIdUserId(OwnerVerification annotation) {
-        final Pair<Long, String> entityIdUserNamePair = getRequestedEntityIdUserName(annotation);
+    private Pair<Long, Long> getEntityIdUserId(Pair<Long, String> entityIdUserNamePair) {
         String userName = entityIdUserNamePair.getRight();
         return Pair.of(
                 entityIdUserNamePair.getKey(),

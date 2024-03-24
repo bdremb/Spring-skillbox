@@ -2,16 +2,16 @@ package com.example.spring.spring.restapi.news.service.impl;
 
 import com.example.spring.spring.restapi.news.exception.EntityNotFoundException;
 import com.example.spring.spring.restapi.news.mapper.NewsItemMapper;
-import com.example.spring.spring.restapi.news.model.NewsCategory;
-import com.example.spring.spring.restapi.news.model.NewsFilter;
+import com.example.spring.spring.restapi.news.model.Category;
 import com.example.spring.spring.restapi.news.model.NewsItem;
 import com.example.spring.spring.restapi.news.model.User;
+import com.example.spring.spring.restapi.news.repository.CategoryRepository;
 import com.example.spring.spring.restapi.news.repository.NewsItemRepository;
 import com.example.spring.spring.restapi.news.repository.UserRepository;
 import com.example.spring.spring.restapi.news.repository.specification.NewsItemSpecification;
-import com.example.spring.spring.restapi.news.service.CategoryService;
 import com.example.spring.spring.restapi.news.service.CommentService;
 import com.example.spring.spring.restapi.news.service.NewsService;
+import com.example.spring.spring.restapi.news.web.model.request.NewsFilterRequest;
 import com.example.spring.spring.restapi.news.web.model.request.NewsItemRequest;
 import com.example.spring.spring.restapi.news.web.model.response.NewsItemResponse;
 import lombok.RequiredArgsConstructor;
@@ -27,15 +27,14 @@ import static java.text.MessageFormat.format;
 public class NewsServiceImpl implements NewsService {
 
     private final NewsItemRepository newsItemRepository;
-    private final NewsItemMapper newsItemMapper;
-
+    private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
-    private final CategoryService categoryService;
+    private final NewsItemMapper newsItemMapper;
 
     private final CommentService commentService;
 
     @Override
-    public List<NewsItemResponse> findAll(NewsFilter filter) {
+    public List<NewsItemResponse> findAll(NewsFilterRequest filter) {
         final List<NewsItem> list = newsItemRepository.findAll(
                 NewsItemSpecification.withFilter(filter),
                 PageRequest.of(filter.getPageNumber(), filter.getPageSize())
@@ -45,7 +44,6 @@ public class NewsServiceImpl implements NewsService {
                 }
         ).toList();
         return newsItemMapper.toResponseList(list);
-
     }
 
     @Override
@@ -55,11 +53,10 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     public NewsItemResponse create(String userName, NewsItemRequest request) {
-        User user = userRepository.findByName(userName).orElse(null);
-        if (user == null) {
-            user = userRepository.save(User.builder().name(userName).build());
-        }
-        NewsCategory category = categoryService.findByName(request.getCategoryName());
+        User user = userRepository.findByName(userName)
+                .orElse(userRepository.save(User.builder().name(userName).build()));
+
+        Category category = categoryRepository.findByCategoryName(request.getCategoryName()).orElse(null);
         NewsItem newsItem = newsItemMapper.toModel(request);
         newsItem.setUser(user);
         newsItem.setCategory(category);
@@ -68,8 +65,8 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public NewsItemResponse update(Long id, String userName, NewsItemRequest request) {
-        NewsCategory category = categoryService.findByName(request.getCategoryName());
+    public NewsItemResponse update(Long id, NewsItemRequest request) {
+        Category category = categoryRepository.findByCategoryName(request.getCategoryName()).orElse(null);
         NewsItem newsItem = newsItemMapper.toUpdateModel(getNewsItemOrFail(id), category, request);
         return newsItemMapper.toResponse(newsItemRepository.save(newsItem));
     }

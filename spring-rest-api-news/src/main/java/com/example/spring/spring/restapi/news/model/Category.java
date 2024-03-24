@@ -31,7 +31,7 @@ import java.util.List;
 @ToString
 @Entity(name = "news_categories")
 @FieldNameConstants
-public class NewsCategory {
+public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

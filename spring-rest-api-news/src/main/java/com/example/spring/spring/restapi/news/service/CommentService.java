@@ -1,6 +1,6 @@
 package com.example.spring.spring.restapi.news.service;
 
-import com.example.spring.spring.restapi.news.model.Comment;
+import com.example.spring.spring.restapi.news.web.model.request.CommentRequest;
 import com.example.spring.spring.restapi.news.web.model.response.CommentResponse;
 
 import java.util.List;
@@ -13,9 +13,9 @@ public interface CommentService {
 
     CommentResponse findById(Long id);
 
-    CommentResponse save(Comment client);
-
-    CommentResponse update(Comment client);
+    CommentResponse update(Long id, CommentRequest request);
 
     void deleteById(Long id);
+
+    CommentResponse create(String userName, CommentRequest request);
 }

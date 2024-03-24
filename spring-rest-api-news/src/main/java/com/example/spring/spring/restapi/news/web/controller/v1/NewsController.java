@@ -2,8 +2,8 @@ package com.example.spring.spring.restapi.news.web.controller.v1;
 
 import com.example.spring.spring.restapi.news.aop.EntityType;
 import com.example.spring.spring.restapi.news.aop.OwnerVerification;
-import com.example.spring.spring.restapi.news.model.NewsFilter;
 import com.example.spring.spring.restapi.news.service.NewsService;
+import com.example.spring.spring.restapi.news.web.model.request.NewsFilterRequest;
 import com.example.spring.spring.restapi.news.web.model.request.NewsItemRequest;
 import com.example.spring.spring.restapi.news.web.model.response.NewsItemResponse;
 import jakarta.validation.Valid;
@@ -30,7 +30,7 @@ public class NewsController {
     private final NewsService newsService;
 
     @GetMapping
-    public ResponseEntity<List<NewsItemResponse>> findAll(NewsFilter newsFilter) {
+    public ResponseEntity<List<NewsItemResponse>> findAll(NewsFilterRequest newsFilter) {
         return ResponseEntity.ok(newsService.findAll(newsFilter));
     }
 
@@ -51,7 +51,7 @@ public class NewsController {
             @PathVariable String userName,
             @RequestBody @Valid NewsItemRequest request
     ) {
-        return ResponseEntity.ok(newsService.update(newsItemId, userName, request));
+        return ResponseEntity.ok(newsService.update(newsItemId,  request));
     }
 
     @DeleteMapping("/{id}/user/{userName}")

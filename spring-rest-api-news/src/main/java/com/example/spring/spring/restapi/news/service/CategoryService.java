@@ -1,20 +1,21 @@
 package com.example.spring.spring.restapi.news.service;
 
-import com.example.spring.spring.restapi.news.model.NewsCategory;
+import com.example.spring.spring.restapi.news.web.model.request.CategoryRequest;
+import com.example.spring.spring.restapi.news.web.model.response.CategoryResponse;
 
 import java.util.List;
 
 public interface CategoryService {
 
-    List<NewsCategory> findAll();
+    List<CategoryResponse> findAll();
 
-    NewsCategory findById(Long id);
+    CategoryResponse findById(Long id);
 
-    NewsCategory findByName(String categoryName);
+    CategoryResponse findByName(String categoryName);
 
-    NewsCategory save(NewsCategory client);
+    CategoryResponse create(CategoryRequest request);
 
-    NewsCategory update(NewsCategory client);
+    CategoryResponse update(Long categoryId, CategoryRequest request);
 
     void deleteById(Long id);
 }

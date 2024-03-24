@@ -5,6 +5,7 @@ import com.example.spring.spring.restapi.news.mapper.CommentMapper;
 import com.example.spring.spring.restapi.news.model.Comment;
 import com.example.spring.spring.restapi.news.repository.CommentRepository;
 import com.example.spring.spring.restapi.news.service.CommentService;
+import com.example.spring.spring.restapi.news.web.model.request.CommentRequest;
 import com.example.spring.spring.restapi.news.web.model.response.CommentResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -36,18 +37,18 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentResponse save(Comment client) {
-        return null;
-    }
-
-    @Override
-    public CommentResponse update(Comment client) {
+    public CommentResponse update(Long id, CommentRequest client) {
         return null;
     }
 
     @Override
     public void deleteById(Long id) {
 
+    }
+
+    @Override
+    public CommentResponse create(String userName, CommentRequest request) {
+        return null;
     }
 
     private Comment getCommentOrFail(Long id) {

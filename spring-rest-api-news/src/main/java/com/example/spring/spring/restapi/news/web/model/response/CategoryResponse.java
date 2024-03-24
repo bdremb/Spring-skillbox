@@ -5,18 +5,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class NewsItemResponse {
+public class CategoryResponse {
+
     private Long id;
-    private String text;
-    private UserResponse user;
-    private CategoryResponse category;
-    private List<CommentResponse> comments = new ArrayList<>();
+    private String categoryName;
     private Instant createdAt;
     private Instant updatedAt;
 }

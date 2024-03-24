@@ -1,6 +1,6 @@
 package com.example.spring.spring.restapi.news.service;
 
-import com.example.spring.spring.restapi.news.model.User;
+import com.example.spring.spring.restapi.news.web.model.request.UserRequest;
 import com.example.spring.spring.restapi.news.web.model.response.UserResponse;
 
 import java.util.List;
@@ -12,9 +12,9 @@ public interface UserService {
 
     UserResponse findByName(String userName);
 
-    UserResponse save(User user);
+    UserResponse create(UserRequest request);
 
-    UserResponse update(User user);
+    UserResponse update(Long userId, UserRequest request);
 
     void deleteById(Long id);
 }

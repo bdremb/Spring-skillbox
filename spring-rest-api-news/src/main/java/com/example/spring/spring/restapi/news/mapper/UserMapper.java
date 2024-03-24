@@ -15,7 +15,7 @@ import java.util.List;
 )
 public interface UserMapper {
 
-    UserResponse toModel(UserRequest request);
+    User toModel(UserRequest request);
 
     User toModel(Long id, UserRequest request);
 
