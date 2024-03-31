@@ -30,7 +30,7 @@ public class NewsController {
     private final NewsService newsService;
 
     @GetMapping
-    public ResponseEntity<List<NewsItemResponse>> findAll(NewsFilterRequest newsFilter) {
+    public ResponseEntity<List<NewsItemResponse>> findAll(@Valid NewsFilterRequest newsFilter) {
         return ResponseEntity.ok(newsService.findAll(newsFilter));
     }
 

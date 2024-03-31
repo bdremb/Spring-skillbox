@@ -8,6 +8,8 @@ import com.example.spring.spring.restapi.news.web.model.request.NewsItemRequest;
 import com.example.spring.spring.restapi.news.web.model.response.NewsItemResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+
 
 public abstract class NewsItemMapperDelegate implements NewsItemMapper {
 
@@ -48,6 +50,11 @@ public abstract class NewsItemMapperDelegate implements NewsItemMapper {
          response.setCategoryName(model.getCategory().getCategoryName());
          response.setCommentsCount(commentService.countByNewsId(model.getId()));
          return response;
+    }
+
+    @Override
+    public List<NewsItemResponse> toResponseList(List<NewsItem> models) {
+        return models.stream().map(this::toResponse).toList();
     }
 
 }
