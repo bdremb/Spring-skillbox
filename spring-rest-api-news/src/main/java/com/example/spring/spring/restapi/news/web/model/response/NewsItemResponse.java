@@ -15,7 +15,7 @@ import java.util.List;
 public class NewsItemResponse {
     private Long id;
     private String text;
-    private UserResponse user;
+    private String userName;
     private String categoryName;
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<CommentResponse> comments = new ArrayList<>();

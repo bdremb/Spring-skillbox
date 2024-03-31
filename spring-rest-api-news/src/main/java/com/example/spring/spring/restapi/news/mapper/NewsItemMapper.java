@@ -3,12 +3,14 @@ package com.example.spring.spring.restapi.news.mapper;
 import com.example.spring.spring.restapi.news.model.NewsItem;
 import com.example.spring.spring.restapi.news.web.model.request.NewsItemRequest;
 import com.example.spring.spring.restapi.news.web.model.response.NewsItemResponse;
+import org.mapstruct.DecoratedWith;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
 
+@DecoratedWith(NewsItemMapperDelegate.class)
 @Mapper(
         componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
@@ -21,7 +23,6 @@ public interface NewsItemMapper {
 
     NewsItem toModel(Long id, NewsItemRequest request);
 
-    @Mapping(target = "categoryName", source = "model.category.categoryName")
     NewsItemResponse toResponse(NewsItem model);
 
     @Mapping(target = "text", source = "request.text")

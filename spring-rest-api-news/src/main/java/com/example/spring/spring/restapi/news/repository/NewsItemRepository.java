@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface NewsItemRepository extends JpaRepository<NewsItem, Long>, JpaSpecificationExecutor<NewsItem> {
 
     @Override
-    @EntityGraph(attributePaths = {"comments", "user"})
+    @EntityGraph(attributePaths = {"comments", "user", "category"})
     Optional<NewsItem> findById(Long id);
 
     NewsItem findByIdAndUserId(Long id, Long userId);

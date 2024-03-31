@@ -1,21 +1,26 @@
 package com.example.spring.spring.restapi.news.mapper;
 
 import com.example.spring.spring.restapi.news.model.NewsItem;
-import com.example.spring.spring.restapi.news.repository.AggregateRepository;
+import com.example.spring.spring.restapi.news.service.CommentService;
+import com.example.spring.spring.restapi.news.service.impl.NewsServiceImpl;
 import com.example.spring.spring.restapi.news.web.model.request.NewsItemRequest;
-import lombok.RequiredArgsConstructor;
+import com.example.spring.spring.restapi.news.web.model.response.NewsItemResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@RequiredArgsConstructor
-public abstract class NewsItemMapperDelegate implements NewsItemMapper{
 
-    private final AggregateRepository commonRepository;
+public abstract class NewsItemMapperDelegate implements NewsItemMapper {
+
+    @Autowired
+    private NewsServiceImpl newsService;
+    @Autowired
+    private CommentService commentService;
 
     @Override
     public NewsItem toModel(String userName, NewsItemRequest request) {
         return NewsItem.builder()
                 .text(request.getText())
-                .user(commonRepository.getUserOrFail(userName))
-                .category(commonRepository.getCategoryOrFail(request.getCategoryName()))
+                .user(newsService.getUserOrFail(userName))
+                .category(newsService.getCategoryOrFail(request.getCategoryName()))
                 .build();
     }
 
@@ -24,8 +29,22 @@ public abstract class NewsItemMapperDelegate implements NewsItemMapper{
         if (newsItem == null) {
             return null;
         }
-        newsItem.setCategory(commonRepository.getCategoryOrFail(request.getCategoryName()));
+        newsItem.setCategory(newsService.getCategoryOrFail(request.getCategoryName()));
         return newsItem;
+    }
+
+    @Override
+    public NewsItemResponse toResponse(NewsItem model) {
+         NewsItemResponse  response = new NewsItemResponse();
+         response.setUserName(model.getUser().getName());
+         response.setId(model.getId());
+         response.setText(model.getText());
+         response.setComments(commentService.findAllByNewsItemId(model.getId()));
+         response.setCreatedAt(model.getCreatedAt());
+         response.setUpdatedAt(model.getUpdatedAt());
+         response.setCategoryName(model.getCategory().getCategoryName());
+         response.setCommentsCount(commentService.countByNewsId(model.getId()));
+         return response;
     }
 
 }

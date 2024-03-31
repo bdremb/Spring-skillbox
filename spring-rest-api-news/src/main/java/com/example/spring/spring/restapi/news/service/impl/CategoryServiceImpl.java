@@ -3,7 +3,6 @@ package com.example.spring.spring.restapi.news.service.impl;
 import com.example.spring.spring.restapi.news.mapper.CategoryMapper;
 import com.example.spring.spring.restapi.news.model.Category;
 import com.example.spring.spring.restapi.news.repository.AggregateRepository;
-import com.example.spring.spring.restapi.news.repository.CategoryRepository;
 import com.example.spring.spring.restapi.news.service.CategoryService;
 import com.example.spring.spring.restapi.news.web.model.request.CategoryRequest;
 import com.example.spring.spring.restapi.news.web.model.response.CategoryResponse;
@@ -14,48 +13,41 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class CategoryServiceImpl implements CategoryService {
+public class CategoryServiceImpl extends AbstractService implements CategoryService {
 
     private final AggregateRepository aggregateRepository;
     private final CategoryMapper categoryMapper;
 
     @Override
     public List<CategoryResponse> findAll() {
-        return categoryMapper.toResponseList(getRepository().findAll());
+        return categoryMapper.toResponseList(aggregateRepository.getCategoryRepository().findAll());
     }
 
     @Override
     public CategoryResponse findById(Long id) {
-        return categoryMapper.toResponse(aggregateRepository.getCategoryOrFail(id));
+        return categoryMapper.toResponse(getCategoryOrFail(id));
     }
-
-//    @Override
-//    public CategoryResponse findByName(String categoryName) {
-//        return categoryMapper.toResponse(
-//                categoryRepository.findByCategoryName(categoryName)
-//                        .orElseThrow(() -> new EntityNotFoundException(format("Category with name={0} not found", categoryName)))
-//        );
-//    }
 
     @Override
     public CategoryResponse create(CategoryRequest request) {
-        return categoryMapper.toResponse(getRepository().save(categoryMapper.toModel(request)));
+        final Category category = aggregateRepository.getCategoryRepository().save(categoryMapper.toModel(request));
+        return categoryMapper.toResponse(category);
     }
 
     @Override
     public CategoryResponse update(Long categoryId, CategoryRequest request) {
-        aggregateRepository.getCategoryOrFail(categoryId);
+        getCategoryOrFail(categoryId);
         Category updatedCategory = categoryMapper.toModel(categoryId, request);
-        return categoryMapper.toResponse(getRepository().save(updatedCategory));
+        return categoryMapper.toResponse(aggregateRepository.getCategoryRepository().save(updatedCategory));
     }
 
     @Override
     public void deleteById(Long id) {
-        getRepository().deleteById(id);
+        aggregateRepository.getCategoryRepository().deleteById(id);
     }
 
-    private CategoryRepository getRepository() {
-        return aggregateRepository.getCategoryRepository();
+    @Override
+    public AggregateRepository getAggregateRepository() {
+        return aggregateRepository;
     }
-
 }

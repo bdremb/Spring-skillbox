@@ -35,7 +35,7 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.findById(id));
     }
 
-    @PostMapping("/user")
+    @PostMapping
     public ResponseEntity<CategoryResponse> create(@RequestBody @Valid CategoryRequest request) {
         return ResponseEntity.status(CREATED).body(categoryService.create(request));
     }
@@ -48,7 +48,7 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.update(userId, request));
     }
 
-    @DeleteMapping("/{id}/user")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         categoryService.deleteById(id);
         return ResponseEntity.noContent().build();

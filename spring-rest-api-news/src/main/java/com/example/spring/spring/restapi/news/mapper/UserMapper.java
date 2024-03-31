@@ -23,4 +23,8 @@ public interface UserMapper {
 
     List<UserResponse> toResponseList(List<User> models);
 
+    default User toUpdatedModel(User user, UserRequest request) {
+        user.setName(request.getName());
+        return user;
+    }
 }

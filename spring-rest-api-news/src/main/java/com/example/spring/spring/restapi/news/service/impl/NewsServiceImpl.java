@@ -3,8 +3,6 @@ package com.example.spring.spring.restapi.news.service.impl;
 import com.example.spring.spring.restapi.news.mapper.NewsItemMapper;
 import com.example.spring.spring.restapi.news.model.NewsItem;
 import com.example.spring.spring.restapi.news.repository.AggregateRepository;
-import com.example.spring.spring.restapi.news.repository.CommentRepository;
-import com.example.spring.spring.restapi.news.repository.NewsItemRepository;
 import com.example.spring.spring.restapi.news.repository.specification.NewsItemSpecification;
 import com.example.spring.spring.restapi.news.service.NewsService;
 import com.example.spring.spring.restapi.news.web.model.request.NewsFilterRequest;
@@ -18,20 +16,18 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class NewsServiceImpl implements NewsService {
+public class NewsServiceImpl extends AbstractService implements NewsService {
 
     private final AggregateRepository aggregateRepository;
     private final NewsItemMapper newsItemMapper;
 
-    private final CommentRepository commentRepository;
-
     @Override
     public List<NewsItemResponse> findAll(NewsFilterRequest filter) {
-        final List<NewsItem> list = getRepository().findAll(
+        final List<NewsItem> list = aggregateRepository.getNewsItemRepository().findAll(
                 NewsItemSpecification.withFilter(filter),
                 PageRequest.of(filter.getPageNumber(), filter.getPageSize())
         ).getContent().stream().map(newsItem -> {
-                    newsItem.setCommentsCount(commentRepository.countByNewsItemId(newsItem.getId()));
+                    newsItem.setCommentsCount(aggregateRepository.getCommentRepository().countByNewsItemId(newsItem.getId()));
                     newsItem.getComments().clear();
                     return newsItem;
                 }
@@ -41,28 +37,28 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     public NewsItemResponse findById(Long id) {
-        return newsItemMapper.toResponse(aggregateRepository.getNewsItemOrFail(id));
+        return newsItemMapper.toResponse(getNewsItemOrFail(id));
     }
 
     @Override
     public NewsItemResponse create(String userName, NewsItemRequest request) {
-        return newsItemMapper.toResponse(getRepository().save(newsItemMapper.toModel(userName, request)));
+        return newsItemMapper.toResponse(aggregateRepository.getNewsItemRepository().save(newsItemMapper.toModel(userName, request)));
     }
 
     @Override
     public NewsItemResponse update(Long id, NewsItemRequest request) {
-        NewsItem newsItem = aggregateRepository.getNewsItemOrFail(id);
+        NewsItem newsItem = getNewsItemOrFail(id);
         NewsItem updatedNewsItem = newsItemMapper.toUpdateModel(newsItem, request);
-        return newsItemMapper.toResponse(getRepository().save(updatedNewsItem));
+        return newsItemMapper.toResponse(aggregateRepository.getNewsItemRepository().save(updatedNewsItem));
     }
 
     @Override
     public void deleteById(Long id) {
-        getRepository().deleteById(id);
+        aggregateRepository.getNewsItemRepository().deleteById(id);
     }
 
-    private NewsItemRepository getRepository() {
-        return aggregateRepository.getNewsItemRepository();
+    @Override
+    public AggregateRepository getAggregateRepository() {
+        return aggregateRepository;
     }
-
 }
