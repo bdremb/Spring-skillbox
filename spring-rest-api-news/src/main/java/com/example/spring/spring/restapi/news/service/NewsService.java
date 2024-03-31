@@ -1,5 +1,7 @@
 package com.example.spring.spring.restapi.news.service;
 
+import com.example.spring.spring.restapi.news.model.NewsItem;
+import com.example.spring.spring.restapi.news.model.User;
 import com.example.spring.spring.restapi.news.web.model.request.NewsFilterRequest;
 import com.example.spring.spring.restapi.news.web.model.request.NewsItemRequest;
 import com.example.spring.spring.restapi.news.web.model.response.NewsItemResponse;
@@ -16,4 +18,8 @@ public interface NewsService {
     NewsItemResponse update(Long id,  NewsItemRequest client);
 
     void deleteById(Long id);
+
+    User getUserOrFail(String userName);
+
+    NewsItem getNewsItemOrFail(Long id);
 }

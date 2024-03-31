@@ -19,6 +19,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.Map;
+import java.util.Objects;
 
 import static java.util.Objects.isNull;
 import static org.springframework.web.servlet.HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE;
@@ -78,10 +79,10 @@ public class OwnerVerificationAspect {
     }
 
     private Pair<Long, String> getRequestedEntityIdUserName(OwnerVerification annotation) {
-        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+        RequestAttributes requestAttributes = Objects.requireNonNull(RequestContextHolder.getRequestAttributes());
+
         HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
         Map<String, String> pathVariables = (Map<String, String>) request.getAttribute(URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-
         final Long entityId = Long.valueOf(pathVariables.get(annotation.pathVariableIdName()));
         final String userName = pathVariables.get(annotation.pathVariableName());
         return Pair.of(entityId, userName);

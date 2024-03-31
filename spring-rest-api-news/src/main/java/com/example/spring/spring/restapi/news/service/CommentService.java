@@ -1,5 +1,6 @@
 package com.example.spring.spring.restapi.news.service;
 
+import com.example.spring.spring.restapi.news.model.Comment;
 import com.example.spring.spring.restapi.news.web.model.request.CommentRequest;
 import com.example.spring.spring.restapi.news.web.model.response.CommentResponse;
 
@@ -18,4 +19,6 @@ public interface CommentService {
     void deleteById(Long id);
 
     CommentResponse create(String userName, CommentRequest request);
+
+    Comment getCommentOrFail(Long id);
 }

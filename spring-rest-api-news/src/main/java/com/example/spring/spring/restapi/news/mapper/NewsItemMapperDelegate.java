@@ -1,8 +1,9 @@
 package com.example.spring.spring.restapi.news.mapper;
 
 import com.example.spring.spring.restapi.news.model.NewsItem;
+import com.example.spring.spring.restapi.news.service.CategoryService;
 import com.example.spring.spring.restapi.news.service.CommentService;
-import com.example.spring.spring.restapi.news.service.impl.NewsServiceImpl;
+import com.example.spring.spring.restapi.news.service.NewsService;
 import com.example.spring.spring.restapi.news.web.model.request.NewsItemRequest;
 import com.example.spring.spring.restapi.news.web.model.response.NewsItemResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 public abstract class NewsItemMapperDelegate implements NewsItemMapper {
 
     @Autowired
-    private NewsServiceImpl newsService;
+    private NewsService newsService;
+    @Autowired
+    private CategoryService categoryService;
     @Autowired
     private CommentService commentService;
 
@@ -20,7 +23,7 @@ public abstract class NewsItemMapperDelegate implements NewsItemMapper {
         return NewsItem.builder()
                 .text(request.getText())
                 .user(newsService.getUserOrFail(userName))
-                .category(newsService.getCategoryOrFail(request.getCategoryName()))
+                .category(categoryService.getCategoryOrFail(request.getCategoryName()))
                 .build();
     }
 
@@ -29,7 +32,7 @@ public abstract class NewsItemMapperDelegate implements NewsItemMapper {
         if (newsItem == null) {
             return null;
         }
-        newsItem.setCategory(newsService.getCategoryOrFail(request.getCategoryName()));
+        newsItem.setCategory(categoryService.getCategoryOrFail(request.getCategoryName()));
         return newsItem;
     }
 

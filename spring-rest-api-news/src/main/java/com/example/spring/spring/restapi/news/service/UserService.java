@@ -1,5 +1,6 @@
 package com.example.spring.spring.restapi.news.service;
 
+import com.example.spring.spring.restapi.news.model.User;
 import com.example.spring.spring.restapi.news.web.model.request.UserRequest;
 import com.example.spring.spring.restapi.news.web.model.response.UserResponse;
 
@@ -15,4 +16,6 @@ public interface UserService {
     UserResponse update(Long userId, UserRequest request);
 
     void deleteById(Long id);
+
+    User getUserOrFail(Long id);
 }
