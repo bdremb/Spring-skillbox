@@ -1,9 +1,7 @@
 package com.example.spring.spring.restapi.news.aop;
 
 import com.example.spring.spring.restapi.news.exception.EntityNotFoundException;
-import com.example.spring.spring.restapi.news.repository.CommentRepository;
-import com.example.spring.spring.restapi.news.repository.NewsItemRepository;
-import com.example.spring.spring.restapi.news.repository.UserRepository;
+import com.example.spring.spring.restapi.news.repository.AggregateRepository;
 import com.example.spring.spring.restapi.news.web.model.response.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -31,9 +29,7 @@ import static org.springframework.web.servlet.HandlerMapping.URI_TEMPLATE_VARIAB
 @RequiredArgsConstructor
 public class OwnerVerificationAspect {
 
-    private final CommentRepository commentRepository;
-    private final NewsItemRepository newsItemRepository;
-    private final UserRepository userRepository;
+    private final AggregateRepository aggregateRepository;
 
     @Around("@annotation(OwnerVerification)")
     public Object validateBefore(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -60,10 +56,10 @@ public class OwnerVerificationAspect {
         final Pair<Long, Long> entityIdUserId = getEntityIdUserId(entityIdUserNamePair);
         switch (entityType) {
             case NEWS -> {
-                return isNull(newsItemRepository.findByIdAndUserId(entityIdUserId.getLeft(), entityIdUserId.getRight()));
+                return isNull(aggregateRepository.getNewsItemRepository().findByIdAndUserId(entityIdUserId.getLeft(), entityIdUserId.getRight()));
             }
             case COMMENT -> {
-                return isNull(commentRepository.findByIdAndUserId(entityIdUserId.getLeft(), entityIdUserId.getRight()));
+                return isNull(aggregateRepository.getCommentRepository().findByIdAndUserId(entityIdUserId.getLeft(), entityIdUserId.getRight()));
             }
             default -> {
                 return true;
@@ -75,7 +71,7 @@ public class OwnerVerificationAspect {
         String userName = entityIdUserNamePair.getRight();
         return Pair.of(
                 entityIdUserNamePair.getKey(),
-                userRepository.findByName(userName)
+                aggregateRepository.getUserRepository().findByName(userName)
                         .orElseThrow(() -> new EntityNotFoundException(String.format("User with name=%s not found", userName)))
                         .getId()
         );

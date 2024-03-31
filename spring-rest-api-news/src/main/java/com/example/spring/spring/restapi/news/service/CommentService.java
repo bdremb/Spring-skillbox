@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface CommentService {
 
-    List<CommentResponse> findAll();
+    List<CommentResponse> findAllByNewsItemId(Long newsItemId);
 
     Long countByNewsId(Long newsId);
 

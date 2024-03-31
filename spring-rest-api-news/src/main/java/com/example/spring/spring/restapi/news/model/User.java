@@ -17,7 +17,6 @@ import lombok.experimental.FieldNameConstants;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
@@ -41,15 +40,15 @@ public class User {
     @Builder.Default
     private List<NewsItem> newsItems = new ArrayList<>();
 
-    public void addNewsItem(NewsItem newsItem) {
-        if(newsItems == null) {
-            newsItems = new ArrayList<>();
-        }
-        newsItems.add(newsItem);
-    }
-
-    public void removeNewsItem(Long newsItemId) {
-        newsItems = newsItems.stream().filter(newsItem -> !newsItem.getId().equals(newsItemId)).collect(Collectors.toList());
-    }
+//    public void addNewsItem(NewsItem newsItem) {
+//        if(newsItems == null) {
+//            newsItems = new ArrayList<>();
+//        }
+//        newsItems.add(newsItem);
+//    }
+//
+//    public void removeNewsItem(Long newsItemId) {
+//        newsItems = newsItems.stream().filter(newsItem -> !newsItem.getId().equals(newsItemId)).collect(Collectors.toList());
+//    }
 
 }

@@ -1,15 +1,13 @@
 package com.example.spring.spring.restapi.news.mapper;
 
-import com.example.spring.spring.restapi.news.model.Category;
 import com.example.spring.spring.restapi.news.model.NewsItem;
 import com.example.spring.spring.restapi.news.web.model.request.NewsItemRequest;
 import com.example.spring.spring.restapi.news.web.model.response.NewsItemResponse;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
-
-import static java.util.Objects.nonNull;
 
 @Mapper(
         componentModel = "spring",
@@ -18,22 +16,16 @@ import static java.util.Objects.nonNull;
 )
 public interface NewsItemMapper {
 
-    NewsItem toModel(NewsItemRequest request);
+    NewsItem toModel(String userName, NewsItemRequest request);
+
 
     NewsItem toModel(Long id, NewsItemRequest request);
 
+    @Mapping(target = "categoryName", source = "model.category.categoryName")
     NewsItemResponse toResponse(NewsItem model);
 
-    default NewsItem toUpdateModel(NewsItem newsItem, Category category, NewsItemRequest request) {
-        return NewsItem.builder()
-                .id(newsItem.getId())
-                .text(nonNull(request.getText()) ? request.getText() : newsItem.getText())
-                .user(newsItem.getUser())
-                .category(nonNull(category) ? category : newsItem.getCategory())
-                .comments(newsItem.getComments())
-                .commentsCount(newsItem.getCommentsCount())
-                .build();
-    }
+    @Mapping(target = "text", source = "request.text")
+    NewsItem toUpdateModel(NewsItem newsItem, NewsItemRequest request);
 
     List<NewsItemResponse> toResponseList(List<NewsItem> models);
 

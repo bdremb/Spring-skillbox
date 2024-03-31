@@ -29,8 +29,8 @@ public class CommentController {
     private final CommentService commentService;
 
     @GetMapping
-    public ResponseEntity<List<CommentResponse>> findAll() {
-        return ResponseEntity.ok(commentService.findAll());
+    public ResponseEntity<List<CommentResponse>> findAllByNewsItemId(Long newsItemId) {
+        return ResponseEntity.ok(commentService.findAllByNewsItemId(newsItemId));
     }
 
     @GetMapping("/{id}")

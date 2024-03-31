@@ -11,8 +11,6 @@ public interface CategoryService {
 
     CategoryResponse findById(Long id);
 
-    CategoryResponse findByName(String categoryName);
-
     CategoryResponse create(CategoryRequest request);
 
     CategoryResponse update(Long categoryId, CategoryRequest request);

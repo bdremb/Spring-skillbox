@@ -1,7 +1,6 @@
 package com.example.spring.spring.restapi.news.mapper;
 
 import com.example.spring.spring.restapi.news.model.Category;
-import com.example.spring.spring.restapi.news.model.User;
 import com.example.spring.spring.restapi.news.web.model.request.CategoryRequest;
 import com.example.spring.spring.restapi.news.web.model.response.CategoryResponse;
 import org.mapstruct.Mapper;
@@ -18,7 +17,7 @@ public interface CategoryMapper {
 
     Category toModel(CategoryRequest request);
 
-    User toModel(Long id, CategoryRequest request);
+    Category toModel(Long id, CategoryRequest request);
 
     CategoryResponse toResponse(Category model);
 

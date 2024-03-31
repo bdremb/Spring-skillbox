@@ -13,7 +13,7 @@ public class CommentResponse {
     private Long id;
     private String commentText;
     private UserResponse user;
-    private NewsItemResponse newsItem;
+    private Long newsItemId;
     private Instant createdAt;
     private Instant updatedAt;
 }
