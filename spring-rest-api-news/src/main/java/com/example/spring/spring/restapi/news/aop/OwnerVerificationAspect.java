@@ -42,7 +42,7 @@ public class OwnerVerificationAspect {
         if (isNotUserNameMatched(entityIdUserName, entityType)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(ErrorResponse.builder()
-                            .message(String.format(
+                            .errorMessage(String.format(
                                     "Forbidden request. User with name = %s is not owner of the %s with id=%d",
                                     entityIdUserName.getRight(),
                                     entityType,

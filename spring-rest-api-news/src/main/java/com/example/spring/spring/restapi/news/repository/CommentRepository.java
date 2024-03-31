@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 public interface CommentRepository extends JpaRepository<Comment, Long>, JpaSpecificationExecutor<Comment> {
     Long countByNewsItemId(Long newsItemId);
 
-
     Comment findByIdAndUserId(Long id, Long userId);
 }
 
