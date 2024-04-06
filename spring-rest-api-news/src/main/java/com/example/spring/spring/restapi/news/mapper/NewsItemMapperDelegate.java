@@ -40,21 +40,26 @@ public abstract class NewsItemMapperDelegate implements NewsItemMapper {
 
     @Override
     public NewsItemResponse toResponse(NewsItem model) {
-         NewsItemResponse  response = new NewsItemResponse();
-         response.setUserName(model.getUser().getName());
-         response.setId(model.getId());
-         response.setText(model.getText());
+         NewsItemResponse  response = toSimpleResponse(model);
          response.setComments(commentService.findAllByNewsItemId(model.getId()));
-         response.setCreatedAt(model.getCreatedAt());
-         response.setUpdatedAt(model.getUpdatedAt());
-         response.setCategoryName(model.getCategory().getCategoryName());
-         response.setCommentsCount(commentService.countByNewsId(model.getId()));
          return response;
     }
 
     @Override
     public List<NewsItemResponse> toResponseList(List<NewsItem> models) {
-        return models.stream().map(this::toResponse).toList();
+        return models.stream().map(this::toSimpleResponse).toList();
+    }
+
+    private NewsItemResponse toSimpleResponse(NewsItem model) {
+        NewsItemResponse  response = new NewsItemResponse();
+        response.setUserName(model.getUser().getName());
+        response.setId(model.getId());
+        response.setText(model.getText());
+        response.setCreatedAt(model.getCreatedAt());
+        response.setUpdatedAt(model.getUpdatedAt());
+        response.setCategoryName(model.getCategory().getCategoryName());
+        response.setCommentsCount(commentService.countByNewsId(model.getId()));
+        return response;
     }
 
 }

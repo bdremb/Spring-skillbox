@@ -23,4 +23,8 @@ public interface CategoryMapper {
 
     List<CategoryResponse> toResponseList(List<Category> models);
 
+    default Category toUpdatedModel(Category category, CategoryRequest request) {
+        category.setCategoryName(request.getCategoryName());
+        return category;
+    }
 }

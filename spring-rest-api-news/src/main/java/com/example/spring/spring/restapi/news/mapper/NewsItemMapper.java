@@ -20,7 +20,6 @@ public interface NewsItemMapper {
 
     NewsItem toModel(String userName, NewsItemRequest request);
 
-
     NewsItem toModel(Long id, NewsItemRequest request);
 
     NewsItemResponse toResponse(NewsItem model);

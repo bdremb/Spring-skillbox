@@ -36,8 +36,7 @@ public class CategoryServiceImpl extends AbstractService implements CategoryServ
 
     @Override
     public CategoryResponse update(Long categoryId, CategoryRequest request) {
-        getCategoryOrFail(categoryId);
-        Category updatedCategory = categoryMapper.toModel(categoryId, request);
+        Category updatedCategory = categoryMapper.toUpdatedModel(getCategoryOrFail(categoryId), request);
         return categoryMapper.toResponse(aggregateRepository.getCategoryRepository().save(updatedCategory));
     }
 

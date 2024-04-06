@@ -20,6 +20,6 @@ public interface NewsItemRepository extends JpaRepository<NewsItem, Long>, JpaSp
     NewsItem findByIdAndUserId(Long id, Long userId);
 
     @Override
-    @EntityGraph(attributePaths = {"comments", "user", "category"})
+    @EntityGraph(attributePaths = {"user", "category"})
     Page<NewsItem> findAll(Specification<NewsItem> spec, Pageable pageable);
 }

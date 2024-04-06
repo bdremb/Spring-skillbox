@@ -26,12 +26,9 @@ public class NewsServiceImpl extends AbstractService implements NewsService {
         final List<NewsItem> list = aggregateRepository.getNewsItemRepository().findAll(
                 NewsItemSpecification.withFilter(filter),
                 PageRequest.of(filter.getPageNumber(), filter.getPageSize())
-        ).getContent().stream().map(newsItem -> {
-                    newsItem.setCommentsCount(aggregateRepository.getCommentRepository().countByNewsItemId(newsItem.getId()));
-                    newsItem.getComments().clear();
-                    return newsItem;
-                }
-        ).toList();
+        ).getContent();
+        list.forEach(newsItem ->
+                newsItem.setCommentsCount(aggregateRepository.getCommentRepository().countByNewsItemId(newsItem.getId())));
         return newsItemMapper.toResponseList(list);
     }
 
