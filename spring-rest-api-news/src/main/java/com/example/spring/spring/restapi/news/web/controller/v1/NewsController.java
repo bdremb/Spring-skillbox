@@ -7,6 +7,9 @@ import com.example.spring.spring.restapi.news.web.model.request.NewsFilterReques
 import com.example.spring.spring.restapi.news.web.model.request.NewsItemRequest;
 import com.example.spring.spring.restapi.news.web.model.response.NewsItemResponse;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -30,8 +34,24 @@ public class NewsController {
     private final NewsService newsService;
 
     @GetMapping
-    public ResponseEntity<List<NewsItemResponse>> findAll(@Valid NewsFilterRequest newsFilter) {
-        return ResponseEntity.ok(newsService.findAll(newsFilter));
+    public ResponseEntity<List<NewsItemResponse>> findAll(
+            @RequestParam @Min(1) @Max(Integer.MAX_VALUE) @NotNull Integer pageSize,
+            @RequestParam @Min(0) @Max(Integer.MAX_VALUE) @NotNull Integer pageNumber,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String userName,
+            @RequestParam(required = false) @Min(0) @Max(Integer.MAX_VALUE) Long userId,
+            @RequestParam(required = false) @Min(0) @Max(Integer.MAX_VALUE) Long categoryId
+    ) {
+        return ResponseEntity.ok(newsService.findAll(
+                NewsFilterRequest.builder()
+                        .pageSize(pageSize)
+                        .pageNumber(pageNumber)
+                        .category(category)
+                        .userName(userName)
+                        .userId(userId)
+                        .categoryId(categoryId)
+                        .build()
+        ));
     }
 
     @GetMapping("/{id}")
@@ -51,7 +71,7 @@ public class NewsController {
             @PathVariable String userName,
             @RequestBody @Valid NewsItemRequest request
     ) {
-        return ResponseEntity.ok(newsService.update(newsItemId,  request));
+        return ResponseEntity.ok(newsService.update(newsItemId, request));
     }
 
     @DeleteMapping("/{id}/user/{userName}")
