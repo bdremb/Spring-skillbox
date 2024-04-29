@@ -1,5 +1,6 @@
 package ru.learn.skill.spring.book.redis.app.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -36,7 +37,7 @@ public class BookEntity implements Serializable {
 
     private String author;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="category_id")
     @ToString.Exclude
     private CategoryEntity category;
