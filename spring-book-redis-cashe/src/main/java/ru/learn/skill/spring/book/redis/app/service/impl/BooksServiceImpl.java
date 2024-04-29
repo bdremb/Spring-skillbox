@@ -40,8 +40,7 @@ public class BooksServiceImpl implements BooksService {
     public BookResponse create(BookRequest request) {
         CategoryEntity category = CategoryEntity.builder().name(request.getCategoryName()).build();
         BookEntity createdBook = mapper.toModel(request);
-        createdBook.setCategory(category);
-        categoryRepository.save(category);
+        createdBook.setCategory( categoryRepository.save(category));
         return mapper.toResponse(repository.save(createdBook));
     }
 
@@ -49,7 +48,8 @@ public class BooksServiceImpl implements BooksService {
     public BookResponse update(Long id, BookRequest request) {
         BookEntity existsBook = getBookByIdOrFail(id);
         if (nonNull(request.getCategoryName())) {
-            CategoryEntity existsCategory = categoryRepository.findById(existsBook.getCategory().getId()).get();
+            CategoryEntity existsCategory = categoryRepository.findById(existsBook.getCategory().getId())
+                    .orElseThrow(() -> new EntityNotFoundException(format("Category with id={0} not found", id)));
             existsCategory.setName(request.getCategoryName());
             existsBook.setCategory(categoryRepository.save(existsCategory));
         }
@@ -59,7 +59,8 @@ public class BooksServiceImpl implements BooksService {
 
     @Override
     public void deleteById(Long id) {
-        repository.delete(getBookByIdOrFail(id));
+        getBookByIdOrFail(id);
+        repository.deleteById(id);
     }
 
     private BookEntity getBookByIdOrFail(Long id) {
