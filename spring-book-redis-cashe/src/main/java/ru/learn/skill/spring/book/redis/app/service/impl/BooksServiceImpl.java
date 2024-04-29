@@ -1,6 +1,7 @@
 package ru.learn.skill.spring.book.redis.app.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.learn.skill.spring.book.redis.app.entity.BookEntity;
@@ -37,6 +38,7 @@ public class BooksServiceImpl implements BooksService {
     }
 
     @Override
+    @Transactional
     public BookResponse create(BookRequest request) {
         CategoryEntity category = CategoryEntity.builder().name(request.getCategoryName()).build();
         BookEntity createdBook = mapper.toModel(request);
@@ -45,6 +47,7 @@ public class BooksServiceImpl implements BooksService {
     }
 
     @Override
+    @Transactional
     public BookResponse update(Long id, BookRequest request) {
         BookEntity existsBook = getBookByIdOrFail(id);
         if (nonNull(request.getCategoryName())) {

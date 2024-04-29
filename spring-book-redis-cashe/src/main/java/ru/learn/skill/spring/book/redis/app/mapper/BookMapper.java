@@ -1,6 +1,5 @@
 package ru.learn.skill.spring.book.redis.app.mapper;
 
-import org.mapstruct.DecoratedWith;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 import ru.learn.skill.spring.book.redis.app.entity.BookEntity;
@@ -11,7 +10,6 @@ import java.util.List;
 
 import static java.util.Objects.nonNull;
 
-@DecoratedWith(BookDelegate.class)
 @Mapper(
         componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.IGNORE
