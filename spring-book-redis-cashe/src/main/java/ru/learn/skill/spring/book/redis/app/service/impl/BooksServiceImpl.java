@@ -15,7 +15,7 @@ import ru.learn.skill.spring.book.redis.app.service.BooksService;
 import java.util.List;
 
 import static java.text.MessageFormat.format;
-import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @Service
 @RequiredArgsConstructor
@@ -38,18 +38,21 @@ public class BooksServiceImpl implements BooksService {
 
     @Override
     public BookResponse create(BookRequest request) {
-        CategoryEntity category = categoryRepository.findByName(request.getCategoryName()).orElse(null);
-        if (isNull(category)) {
-            category = CategoryEntity.builder().name(request.getCategoryName()).build();
-        }
+        CategoryEntity category = CategoryEntity.builder().name(request.getCategoryName()).build();
+        BookEntity createdBook = mapper.toModel(request);
+        createdBook.setCategory(category);
         categoryRepository.save(category);
-        BookEntity createdBook = mapper.toModel(request, category);
         return mapper.toResponse(repository.save(createdBook));
     }
 
     @Override
     public BookResponse update(Long id, BookRequest request) {
         BookEntity existsBook = getBookByIdOrFail(id);
+        if (nonNull(request.getCategoryName())) {
+            CategoryEntity existsCategory = categoryRepository.findById(existsBook.getCategory().getId()).get();
+            existsCategory.setName(request.getCategoryName());
+            existsBook.setCategory(categoryRepository.save(existsCategory));
+        }
         BookEntity updatedBook = mapper.toUpdatedModel(existsBook, request);
         return mapper.toResponse(repository.save(updatedBook));
     }

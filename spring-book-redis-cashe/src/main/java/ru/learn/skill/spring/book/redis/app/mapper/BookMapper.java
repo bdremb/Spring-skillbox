@@ -5,7 +5,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import ru.learn.skill.spring.book.redis.app.entity.BookEntity;
-import ru.learn.skill.spring.book.redis.app.entity.CategoryEntity;
 import ru.learn.skill.spring.book.redis.app.model.request.BookRequest;
 import ru.learn.skill.spring.book.redis.app.model.response.BookResponse;
 
@@ -18,8 +17,7 @@ import java.util.List;
 )
 public interface BookMapper {
 
-    @Mapping(target = "name", source = "request.name")
-    BookEntity toModel(BookRequest request, CategoryEntity category);
+    BookEntity toModel(BookRequest request);
 
     @Mapping(target = "name", source = "request.name")
     @Mapping(target = "author", source = "request.author")
