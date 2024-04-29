@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,6 +17,7 @@ import lombok.ToString;
 
 import java.io.Serializable;
 
+@Builder
 @Getter
 @Setter
 @AllArgsConstructor
@@ -32,7 +34,7 @@ public class CategoryEntity implements Serializable {
     @Column(name = "category_name")
     private String name;
 
-    @OneToOne(mappedBy = "category", cascade = CascadeType.DETACH)
+    @OneToOne(mappedBy = "category", cascade = CascadeType.ALL)
     @ToString.Exclude
     private BookEntity book;
 

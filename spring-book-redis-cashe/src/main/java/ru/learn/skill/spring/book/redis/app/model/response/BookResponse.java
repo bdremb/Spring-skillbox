@@ -11,5 +11,5 @@ public class BookResponse {
     private Long id;
     private String name;
     private String author;
-    private String category;
+    private String categoryName;
 }
