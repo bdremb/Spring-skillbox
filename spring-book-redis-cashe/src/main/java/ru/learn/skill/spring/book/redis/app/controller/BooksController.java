@@ -33,7 +33,7 @@ public class BooksController {
     }
 
     @GetMapping("/name/{name}/author/{author}")
-    public ResponseEntity<BookResponse> findByNameCategoryKey(@PathVariable String name, @PathVariable String author) {
+    public ResponseEntity<BookResponse> findByNameAndAuthorKey(@PathVariable String name, @PathVariable String author) {
         return ResponseEntity.ok(service.findByNameAndAuthor(name, author));
     }
 

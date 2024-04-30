@@ -36,6 +36,10 @@ dependencies {
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
 
+    testImplementation("com.redis.testcontainers:testcontainers-redis-junit-jupiter:1.4.6")
+    testImplementation("org.testcontainers:junit-jupiter:1.17.6")
+    testImplementation("org.testcontainers:postgresql:1.17.6")
+    testImplementation("net.javacrumbs.json-unit:json-unit:2.38.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 

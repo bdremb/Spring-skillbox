@@ -7,6 +7,7 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import ru.learn.skill.spring.book.redis.app.entity.BookEntity;
 import ru.learn.skill.spring.book.redis.app.entity.CategoryEntity;
@@ -49,9 +50,12 @@ public class BooksServiceImpl implements BooksService {
     @Transactional
     @Caching(evict = {
             @CacheEvict(value = BOOKS_BY_CATEGORY, allEntries = true),
-            @CacheEvict(value = BOOKS_BY_NAME_AND_AUTHOR, allEntries = true)
+            @CacheEvict(value = BOOKS_BY_NAME_AND_AUTHOR, key = "#request.name + #request.author")
     })
     public BookResponse create(BookRequest request) {
+        if(repository.getBookEntityByNameAndAuthor(request.getName(), request.getAuthor()).isPresent()) {
+            throw new DuplicateKeyException("Key name/author already exists");
+        }
         CategoryEntity category = CategoryEntity.builder().name(request.getCategoryName()).build();
         BookEntity createdBook = mapper.toModel(request);
         createdBook.setCategory( categoryRepository.save(category));
