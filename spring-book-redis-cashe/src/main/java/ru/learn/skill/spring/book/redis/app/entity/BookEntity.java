@@ -37,6 +37,8 @@ public class BookEntity implements Serializable {
 
     private String author;
 
+    private String info;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="category_id")
     @ToString.Exclude

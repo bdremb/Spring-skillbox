@@ -8,11 +8,12 @@ import java.util.List;
 public interface BooksService {
     List<BookResponse> findAll(String category);
 
-    BookResponse findByNameCategoryKey(String name, String author);
+    BookResponse findByNameAndAuthor(String name, String author);
 
     BookResponse create(BookRequest request);
 
-    BookResponse update(Long id, BookRequest request);
+    BookResponse update(String name, String author, BookRequest request);
 
-    void deleteById(Long id);
+    void deleteById(String name, String author);
 }
+

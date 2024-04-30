@@ -32,9 +32,9 @@ public class BooksController {
         return ResponseEntity.ok(service.findAll(category));
     }
 
-    @GetMapping("/name/{name}/category/{category}")
-    public ResponseEntity<BookResponse> findByNameCategoryKey(@PathVariable String name, @PathVariable String category) {
-        return ResponseEntity.ok(service.findByNameCategoryKey(name, category));
+    @GetMapping("/name/{name}/author/{author}")
+    public ResponseEntity<BookResponse> findByNameCategoryKey(@PathVariable String name, @PathVariable String author) {
+        return ResponseEntity.ok(service.findByNameAndAuthor(name, author));
     }
 
     @PostMapping
@@ -42,17 +42,17 @@ public class BooksController {
         return ResponseEntity.status(CREATED).body(service.create(request));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/name/{name}/author/{author}")
     public ResponseEntity<BookResponse> update(
-            @PathVariable("id") Long bookId,
+            @PathVariable String name, @PathVariable String author,
             @RequestBody @Valid BookRequest request
     ) {
-        return ResponseEntity.ok(service.update(bookId, request));
+        return ResponseEntity.ok(service.update(name, author, request));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") Long bookId) {
-        service.deleteById(bookId);
+    @DeleteMapping("/name/{name}/author/{author}")
+    public ResponseEntity<Void> delete(@PathVariable String name, @PathVariable String author) {
+        service.deleteById(name, author);
         return ResponseEntity.noContent().build();
     }
 

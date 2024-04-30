@@ -26,6 +26,9 @@ public interface BookMapper {
         if (nonNull(request.getAuthor())) {
             model.setAuthor(request.getAuthor());
         }
+        if (nonNull(request.getInfo())) {
+            model.setInfo(request.getInfo());
+        }
         return model;
     }
 

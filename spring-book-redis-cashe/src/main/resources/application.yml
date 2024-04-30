@@ -17,3 +17,13 @@ spring:
 app:
   redis:
     enable: true
+  cache:
+    cache-names:
+      - booksByCategory
+      - booksByNameAndAuthor
+    caches:
+      booksByNameAndAuthor:
+        expiry: 25s
+      booksByCategory:
+        expiry: 30s
+
