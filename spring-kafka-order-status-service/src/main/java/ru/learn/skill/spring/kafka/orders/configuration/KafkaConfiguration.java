@@ -32,7 +32,7 @@ public class KafkaConfiguration {
     private String groupId;
 
     @Bean
-    public ProducerFactory<String, OrderEvent> kafkaMessageProducerFactory(ObjectMapper objectMapper) {
+    public ProducerFactory<String, OrderStatusEvent> kafkaMessageProducerFactory(ObjectMapper objectMapper) {
         Map<String, Object> config = new HashMap<>();
 
         config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
@@ -43,12 +43,12 @@ public class KafkaConfiguration {
     }
 
     @Bean
-    public KafkaTemplate<String, OrderEvent> kafkaTemplate(ProducerFactory<String, OrderEvent> kafkaMessageProducerFactory) {
+    public KafkaTemplate<String, OrderStatusEvent> kafkaTemplate(ProducerFactory<String, OrderStatusEvent> kafkaMessageProducerFactory) {
         return new KafkaTemplate<>(kafkaMessageProducerFactory);
     }
 
     @Bean
-    public ConsumerFactory<String, OrderStatusEvent> kafkaMessageConsumerFactory(ObjectMapper objectMapper) {
+    public ConsumerFactory<String, OrderEvent> kafkaMessageConsumerFactory(ObjectMapper objectMapper) {
         Map<String, Object> config = new HashMap<>();
 
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
@@ -61,10 +61,10 @@ public class KafkaConfiguration {
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, OrderStatusEvent> kafkaMessageConcurrentKafkaListenerContainerFactory(
-            ConsumerFactory<String, OrderStatusEvent> kafkaMessageConsumerFactory
+    public ConcurrentKafkaListenerContainerFactory<String, OrderEvent> kafkaMessageConcurrentKafkaListenerContainerFactory(
+            ConsumerFactory<String, OrderEvent> kafkaMessageConsumerFactory
     ) {
-        ConcurrentKafkaListenerContainerFactory<String, OrderStatusEvent> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        ConcurrentKafkaListenerContainerFactory<String, OrderEvent> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(kafkaMessageConsumerFactory);
 
         return factory;

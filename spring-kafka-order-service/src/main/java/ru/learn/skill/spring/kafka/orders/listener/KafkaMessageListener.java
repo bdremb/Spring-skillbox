@@ -8,6 +8,7 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 import ru.learn.skill.spring.kafka.orders.model.OrderEvent;
+import ru.learn.skill.spring.kafka.orders.model.OrderStatusEvent;
 
 import java.util.UUID;
 
@@ -22,7 +23,7 @@ public class KafkaMessageListener {
             containerFactory = "kafkaMessageConcurrentKafkaListenerContainerFactory"
     )
     public void listen(
-            @Payload OrderEvent message,
+            @Payload OrderStatusEvent message,
             @Header(value = KafkaHeaders.RECEIVED_KEY, required = false) UUID key,
             @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
             @Header(KafkaHeaders.RECEIVED_PARTITION) Integer partition,

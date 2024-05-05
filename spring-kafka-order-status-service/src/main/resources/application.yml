@@ -1,9 +1,9 @@
 server:
-  port: 8080
+  port: 8082
 
 spring:
   application:
-    name: spring-kafka-order-service
+    name: spring-kafka-order-status-service
   kafka:
     bootstrap-servers: localhost:9092
 
