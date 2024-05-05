@@ -21,10 +21,10 @@ public class KafkaMessageListener {
             containerFactory = "kafkaMessageConcurrentKafkaListenerContainerFactory"
     )
     public void listen(@Payload OrderEvent message) {
-        if (!message.getProduct().isEmpty()) {
-            service.sendMessage("CREATED");
-        } else {
+        if (message.getProduct().isEmpty()) {
             service.sendMessage("PROCESS");
+        } else {
+            service.sendMessage("CREATED");
         }
     }
 
