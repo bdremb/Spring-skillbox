@@ -1,0 +1,14 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: spring-kafka-order-status-service
+  kafka:
+    bootstrap-servers: localhost:9092
+
+app:
+  kafka:
+    orderTopic: "order-topic"
+    orderStatusTopic: "order-status-topic"
+    orderGroupId: "order-group-id"

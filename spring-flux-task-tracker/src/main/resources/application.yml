@@ -1,3 +1,6 @@
 spring:
-    application:
-        name: spring-flux-task-tracker
+  application:
+    name: spring-flux-task-tracker
+  data:
+    mongodb:
+      uri: mongodb://root:root@localhost:27017/task_tracker_db?authSource=admin
