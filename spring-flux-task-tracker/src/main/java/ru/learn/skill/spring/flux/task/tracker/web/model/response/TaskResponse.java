@@ -3,6 +3,7 @@ package ru.learn.skill.spring.flux.task.tracker.web.model.response;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.learn.skill.spring.flux.task.tracker.entity.User;
 
 import java.time.Instant;
 import java.util.Set;
@@ -14,11 +15,11 @@ public class TaskResponse {
 
     private String id;
     private String name;
-    private Integer description;
+    private String description;
     private Instant createdAt;
     private Instant updatedAt;
     private String status;
-    private String authorId;
-    private String assigneeId;
-    private Set<String> observerIds;
+    private User author;
+    private User assignee;
+    private Set<User> observers;
 }

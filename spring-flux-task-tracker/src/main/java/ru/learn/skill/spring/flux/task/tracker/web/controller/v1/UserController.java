@@ -24,8 +24,8 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public Flux<ResponseEntity<UserResponse>> getAll() {
-        return userService.findAll().map(ResponseEntity::ok);
+    public Flux<UserResponse> getAll() {
+        return userService.findAll();
     }
 
     @GetMapping("/{id}")

@@ -1,6 +1,7 @@
 package ru.learn.skill.spring.flux.task.tracker.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -13,13 +14,14 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Document(collection = "tasks")
 public class Task {
 
     @Id
     private String id;
     private String name;
-    private Integer description;
+    private String description;
     private Instant createdAt;
     private Instant updatedAt;
     private TaskStatus status;
