@@ -46,10 +46,37 @@ public class TaskService {
         List<String> ids = new ArrayList<>(request.getObserverIds());
         ids.addAll(List.of(request.getAssigneeId(), request.getAuthorId()));
         Mono<List<User>> specificMonoUsers = userRepository.findAllById(ids).collectList();
+
         return taskMapper.toMonoResponse(
                 Mono.zip(savedTask, specificMonoUsers)
                         .flatMap(data ->
                                 Mono.just(taskMapper.toTask(data.getT1(), data.getT2())))
+        );
+    }
+
+    public Mono<TaskResponse> findById(String id) {
+        Mono<Task> task = taskRepository.findById(id);
+        Mono<List<User>> allMonoUsers = userRepository.findAll().collectList();
+        return taskMapper.toMonoResponse(
+                Mono.zip(task, allMonoUsers)
+                        .flatMap(data ->
+                                Mono.just(taskMapper.toTask(data.getT1(), data.getT2())))
+        );
+    }
+
+    public Mono<TaskResponse> update(String id, TaskRequest request) {
+        Mono<Task> task = taskRepository.findById(id);
+        Mono<Task> updatedTask = taskMapper.toUpdatedMonoTask(task, request);
+        Mono<List<User>> allMonoUsers = userRepository.findAll().collectList();
+        return taskMapper.toMonoResponse(
+                Mono.zip(updatedTask, allMonoUsers)
+                        .flatMap(data -> {
+                                    final Mono<Task> savedTask = taskRepository.save(data.getT1());
+                                    return Mono.zip(savedTask, allMonoUsers)
+                                            .flatMap(data1 ->
+                                                    Mono.just(taskMapper.toTask(data1.getT1(), data1.getT2())));
+                                }
+                        )
         );
     }
 
