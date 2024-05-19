@@ -11,7 +11,6 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TaskResponse {
-
     private String id;
     private String name;
     private String description;

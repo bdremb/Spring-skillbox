@@ -28,76 +28,69 @@ public class TaskService {
 
 
     public Flux<TaskResponse> findAll() {
-        Mono<List<Task>> allMonoTasks = taskRepository.findAll().collectList();
-        Mono<List<User>> allMonoUsers = userRepository.findAll().collectList();
-
         return taskMapper.toFluxResponse(
-                Mono.zip(allMonoTasks, allMonoUsers)
-                        .flatMap(data -> {
-                            final List<Task> tasks = data.getT1();
-                            return Mono.just(tasks.stream()
-                                    .map(task -> taskMapper.toTask(task, data.getT2()))
-                                    .toList());
-                        }).flatMapMany(Flux::fromIterable)
+                Mono.zip(
+                        taskRepository.findAll().collectList(),
+                        userRepository.findAll().collectList()
+                ).flatMap(data -> {
+                    final List<Task> tasks = data.getT1();
+                    return Mono.just(tasks.stream()
+                            .map(task -> taskMapper.toTask(task, data.getT2()))
+                            .toList());
+                }).flatMapMany(Flux::fromIterable)
         );
     }
 
     public Mono<TaskResponse> create(TaskRequest request) {
         Task createdTask = taskMapper.toTask(request, Instant.now());
-        final Mono<Task> savedTask = taskRepository.save(createdTask);
-        List<String> ids = new ArrayList<>(request.getObserverIds());
-        ids.addAll(List.of(request.getAssigneeId(), request.getAuthorId()));
-        Mono<List<User>> specificMonoUsers = userRepository.findAllById(ids).collectList();
+        List<String> specificUserIds = new ArrayList<>(request.getObserverIds());
+        specificUserIds.addAll(List.of(request.getAssigneeId(), request.getAuthorId()));
 
         return taskMapper.toMonoResponse(
-                Mono.zip(savedTask, specificMonoUsers)
-                        .flatMap(data ->
-                                Mono.just(taskMapper.toTask(data.getT1(), data.getT2())))
+                Mono.zip(
+                        taskRepository.save(createdTask),
+                        userRepository.findAllById(specificUserIds).collectList()
+                ).flatMap(data ->
+                        Mono.just(taskMapper.toTask(data.getT1(), data.getT2())))
         );
     }
 
     public Mono<TaskResponse> findById(String id) {
-        Mono<Task> task = taskRepository.findById(id);
-        Mono<List<User>> allMonoUsers = userRepository.findAll().collectList();
         return taskMapper.toMonoResponse(
-                Mono.zip(task, allMonoUsers)
-                        .flatMap(data ->
-                                Mono.just(taskMapper.toTask(data.getT1(), data.getT2())))
+                Mono.zip(
+                        taskRepository.findById(id),
+                        userRepository.findAll().collectList()
+                ).flatMap(data ->
+                        Mono.just(taskMapper.toTask(data.getT1(), data.getT2())))
         );
     }
 
     public Mono<TaskResponse> update(String id, TaskRequest request) {
-        Mono<Task> task = taskRepository.findById(id);
-        Mono<Task> updatedTask = taskMapper.toUpdatedMonoTask(task, request);
-        Mono<List<User>> allMonoUsers = userRepository.findAll().collectList();
-
         return taskMapper.toMonoResponse(
-                Mono.zip(updatedTask, allMonoUsers)
-                        .flatMap(data -> {
-                                    final Mono<Task> savedTask = taskRepository.save(data.getT1());
-                                    return Mono.zip(savedTask, allMonoUsers)
-                                            .flatMap(data1 ->
-                                                    Mono.just(taskMapper.toTask(data1.getT1(), data1.getT2())));
-                                }
-                        )
+                taskRepository.findById(id)
+                        .flatMap(taskForUpdate -> {
+                            final Mono<Task> savedTask = taskRepository.save(taskMapper.toUpdatedTask(taskForUpdate, request));
+                            final Mono<List<User>> allMonoUsers = userRepository.findAll().collectList();
+                            return Mono.zip(savedTask, allMonoUsers)
+                                    .flatMap(data1 ->
+                                            Mono.just(taskMapper.toTask(data1.getT1(), data1.getT2())));
+                        })
         );
     }
 
     public Mono<TaskResponse> addObserver(String id, String observerId) {
-        Mono<Task> existsTask = taskRepository.findById(id);
-        Mono<User> newObserver = userRepository.findById(observerId);
-        Mono<List<User>> allMonoUsers = userRepository.findAll().collectList();
-
         return taskMapper.toMonoResponse(
-                Mono.zip(existsTask, allMonoUsers, newObserver)
-                        .flatMap(data -> {
-                            data.getT3();
-                            final Task task = data.getT1();
-                            task.getObserverIds().add(observerId);
-                            final Mono<Task> savedTask = taskRepository.save(task);
-                            return Mono.zip(savedTask, allMonoUsers)
-                                    .flatMap(data1 ->
-                                            Mono.just(taskMapper.toTask(data1.getT1(), data1.getT2())));
+                taskRepository.findById(id)
+                        .flatMap(updatedTask -> {
+                            updatedTask.getObserverIds().add(observerId);
+                            return Mono.zip(
+                                    taskRepository.save(updatedTask),
+                                    userRepository.findAll().collectList(),
+                                    userRepository.findById(observerId)
+                            ).flatMap(data -> {
+                                data.getT3();
+                                return Mono.just(taskMapper.toTask(data.getT1(), data.getT2()));
+                            });
                         }));
     }
 
