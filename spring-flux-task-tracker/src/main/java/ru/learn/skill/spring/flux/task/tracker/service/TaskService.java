@@ -2,6 +2,7 @@ package ru.learn.skill.spring.flux.task.tracker.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.learn.skill.spring.flux.task.tracker.entity.Task;
 import ru.learn.skill.spring.flux.task.tracker.entity.User;
@@ -29,10 +30,10 @@ public class TaskService {
     private final TaskMapper taskMapper;
 
 
-    public Mono<List<TaskResponse>> findAll() {
+    public Flux<TaskResponse> findAll() {
         Mono<List<Task>> allMonoTasks = taskRepository.findAll().collectList();
         Mono<List<User>> allMonoUsers = userRepository.findAll().collectList();
-        return Mono.zip(allMonoTasks, allMonoUsers)
+        return taskMapper.toFluxResponse(Mono.zip(allMonoTasks, allMonoUsers)
                 .flatMap(data -> {
                     final List<Task> tasks = data.getT1();
                     final Map<String, User> users = data.getT2().stream()
@@ -46,8 +47,8 @@ public class TaskService {
                                 .filter(observerIds::contains)
                                 .map(users::get).collect(toSet()));
                     });
-                    return Mono.just(taskMapper.toListResponse(tasks));
-                });
+                    return Mono.just(tasks);
+                }).flatMapMany(Flux::fromIterable));
     }
 
 

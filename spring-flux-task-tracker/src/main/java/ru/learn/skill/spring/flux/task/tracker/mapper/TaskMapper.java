@@ -9,7 +9,6 @@ import ru.learn.skill.spring.flux.task.tracker.web.model.request.TaskRequest;
 import ru.learn.skill.spring.flux.task.tracker.web.model.response.TaskResponse;
 
 import java.time.Instant;
-import java.util.List;
 
 @Mapper(
         componentModel = "spring",
@@ -18,8 +17,6 @@ import java.util.List;
 public interface TaskMapper {
 
     TaskResponse toResponse(Task model);
-
-    List<TaskResponse> toListResponse(List<Task> models);
 
     default Mono<TaskResponse> toMonoResponse(Mono<Task> model) {
         return model.map(this::toResponse);
