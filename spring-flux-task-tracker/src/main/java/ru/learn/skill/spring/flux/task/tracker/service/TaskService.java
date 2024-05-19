@@ -13,6 +13,7 @@ import ru.learn.skill.spring.flux.task.tracker.web.model.request.TaskRequest;
 import ru.learn.skill.spring.flux.task.tracker.web.model.response.TaskResponse;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,15 +39,7 @@ public class TaskService {
                     final List<Task> tasks = data.getT1();
                     final Map<String, User> users = data.getT2().stream()
                             .collect(toMap(User::getId, identity()));
-                    tasks.forEach(task -> {
-                        task.setAuthor(users.get(task.getAuthorId()));
-                        task.setAssignee(users.get(task.getAssigneeId()));
-                        final Set<String> observerIds = task.getObserverIds();
-
-                        task.setObservers(users.keySet().stream()
-                                .filter(observerIds::contains)
-                                .map(users::get).collect(toSet()));
-                    });
+                    tasks.forEach(task -> setUsers(task, users));
                     return Mono.just(tasks);
                 }).flatMapMany(Flux::fromIterable));
     }
@@ -54,8 +47,28 @@ public class TaskService {
 
     public Mono<TaskResponse> create(TaskRequest request) {
         Task createdTask = taskMapper.toTask(request, Instant.now());
-//        return taskMapper.toMonoResponse(taskRepository.save(createdTask).map(this::fillTask));
-        return null;
+        final Mono<Task> savedTask = taskRepository.save(createdTask);
+        List<String> ids = new ArrayList<>(request.getObserverIds());
+        ids.addAll(List.of(request.getAssigneeId(), request.getAuthorId()));
+        Mono<List<User>> specificMonoUsers = userRepository.findAllById(ids).collectList();
+        return taskMapper.toMonoResponse(Mono.zip(savedTask, specificMonoUsers)
+                .flatMap(data -> {
+                    final Task task = data.getT1();
+                    final Map<String, User> users = data.getT2().stream()
+                            .collect(toMap(User::getId, identity()));
+                    setUsers(task, users);
+                    return Mono.just(task);
+                }));
     }
+
+    private static void setUsers(Task task, Map<String, User> users) {
+        task.setAuthor(users.get(task.getAuthorId()));
+        task.setAssignee(users.get(task.getAssigneeId()));
+        final Set<String> observerIds = task.getObserverIds();
+        task.setObservers(users.keySet().stream()
+                .filter(observerIds::contains)
+                .map(users::get).collect(toSet()));
+    }
+
 
 }
