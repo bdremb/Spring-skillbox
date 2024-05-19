@@ -1,6 +1,7 @@
 package ru.learn.skill.spring.flux.task.tracker.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -16,6 +17,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TaskService {
@@ -68,6 +70,7 @@ public class TaskService {
         Mono<Task> task = taskRepository.findById(id);
         Mono<Task> updatedTask = taskMapper.toUpdatedMonoTask(task, request);
         Mono<List<User>> allMonoUsers = userRepository.findAll().collectList();
+
         return taskMapper.toMonoResponse(
                 Mono.zip(updatedTask, allMonoUsers)
                         .flatMap(data -> {
@@ -80,5 +83,22 @@ public class TaskService {
         );
     }
 
+    public Mono<TaskResponse> addObserver(String id, String observerId) {
+        Mono<Task> existsTask = taskRepository.findById(id);
+        Mono<User> newObserver = userRepository.findById(observerId);
+        Mono<List<User>> allMonoUsers = userRepository.findAll().collectList();
+
+        return taskMapper.toMonoResponse(
+                Mono.zip(existsTask, allMonoUsers, newObserver)
+                        .flatMap(data -> {
+                            data.getT3();
+                            final Task task = data.getT1();
+                            task.getObserverIds().add(observerId);
+                            final Mono<Task> savedTask = taskRepository.save(task);
+                            return Mono.zip(savedTask, allMonoUsers)
+                                    .flatMap(data1 ->
+                                            Mono.just(taskMapper.toTask(data1.getT1(), data1.getT2())));
+                        }));
+    }
 
 }

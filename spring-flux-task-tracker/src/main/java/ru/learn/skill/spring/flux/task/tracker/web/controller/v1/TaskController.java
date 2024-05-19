@@ -45,6 +45,15 @@ public class TaskController {
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
+
+    @PutMapping("/{id}/add-observer/{observerId}")
+    public Mono<ResponseEntity<TaskResponse>> addObserver(@PathVariable String id, @PathVariable String observerId) {
+        return taskService.addObserver(id, observerId)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
+    }
+
+
 //
 //    @DeleteMapping("/{id}")
 //    public Mono<ResponseEntity<Void>> deleteItem(@PathVariable String id) {
