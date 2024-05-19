@@ -2,6 +2,7 @@ package ru.learn.skill.spring.flux.task.tracker.web.controller.v1;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -54,11 +55,10 @@ public class TaskController {
     }
 
 
-//
-//    @DeleteMapping("/{id}")
-//    public Mono<ResponseEntity<Void>> deleteItem(@PathVariable String id) {
-//        return taskService.deleteById(id)
-//                .then(Mono.just(ResponseEntity.noContent().build()));
-//    }
+    @DeleteMapping("/{id}")
+    public Mono<ResponseEntity<Void>> deleteItem(@PathVariable String id) {
+        return taskService.deleteById(id)
+                .then(Mono.just(ResponseEntity.noContent().build()));
+    }
 
 }

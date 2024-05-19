@@ -101,4 +101,8 @@ public class TaskService {
                         }));
     }
 
+    public Mono<Void> deleteById(String id) {
+        return taskRepository.deleteById(id);
+    }
+
 }
