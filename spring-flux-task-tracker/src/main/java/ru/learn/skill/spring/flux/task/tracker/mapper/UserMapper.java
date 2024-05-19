@@ -1,13 +1,14 @@
 package ru.learn.skill.spring.flux.task.tracker.mapper;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.learn.skill.spring.flux.task.tracker.entity.User;
 import ru.learn.skill.spring.flux.task.tracker.web.model.request.UserRequest;
 import ru.learn.skill.spring.flux.task.tracker.web.model.response.UserResponse;
+
+import static java.util.Objects.nonNull;
 
 @Mapper(
         componentModel = "spring",
@@ -27,9 +28,15 @@ public interface UserMapper {
 
     User toUser(UserRequest request);
 
-    @Mapping(target = "email", source = "request.email", defaultValue = "user.email")
-    @Mapping(target = "username", source = "request.username", defaultValue = "user.username")
-    User toUpdatedUser(User user, UserRequest request);
+    default User toUpdatedUser(User user, UserRequest request) {
+        if(nonNull(request.getUsername())) {
+            user.setUsername(request.getUsername());
+        }
+        if(nonNull(request.getEmail())) {
+            user.setEmail(request.getEmail());
+        }
+        return user;
+    }
 
 }
 

@@ -1,9 +1,6 @@
 package ru.learn.skill.spring.flux.task.tracker.mapper;
 
-import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;
 import org.springframework.util.CollectionUtils;
 import reactor.core.publisher.Flux;
@@ -53,27 +50,31 @@ public interface TaskMapper {
         return task;
     }
 
-    @Mapping(target = "name", source = "request.name", defaultValue = "task.name")
-    @Mapping(target = "description", source = "request.description", defaultValue = "task.description")
-    @Mapping(target = "authorId", source = "request.authorId", defaultValue = "task.authorId")
-    @Mapping(target = "assigneeId", source = "request.assigneeId", defaultValue = "task.assigneeId")
-    @Mapping(target = "status", ignore = true)
-    @Mapping(target = "observerIds", ignore = true)
-    Task toUpdatedTask(Task task, TaskRequest request);
-
-    default Mono<Task> toUpdatedMonoTask(Mono<Task> task, TaskRequest request) {
-        return task.map(t -> toUpdatedTask(t, request));
-    }
-
-    @AfterMapping
-    default void afterToUpdatedTask(@MappingTarget Task task, TaskRequest request) {
+    default Task toUpdatedTask(Task task, TaskRequest request) {
+        task.setUpdatedAt(Instant.now());
+        if (nonNull(request.getName())) {
+            task.setName(request.getName());
+        }
+        if (nonNull(request.getDescription())) {
+            task.setDescription(request.getDescription());
+        }
+        if (nonNull(request.getAuthorId())) {
+            task.setAuthorId(request.getAuthorId());
+        }
+        if (nonNull(request.getAssigneeId())) {
+            task.setAssigneeId(request.getAssigneeId());
+        }
         if (nonNull(request.getStatus())) {
             task.setStatus(Task.TaskStatus.valueOf(request.getStatus()));
         }
         if(!CollectionUtils.isEmpty(request.getObserverIds())) {
             task.setObserverIds(request.getObserverIds());
         }
-        task.setUpdatedAt(Instant.now());
+        return task;
+    }
+
+    default Mono<Task> toUpdatedMonoTask(Mono<Task> task, TaskRequest request) {
+        return task.map(t -> toUpdatedTask(t, request));
     }
 
 }

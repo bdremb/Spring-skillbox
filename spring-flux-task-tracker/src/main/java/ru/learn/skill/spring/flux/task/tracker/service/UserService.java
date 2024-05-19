@@ -5,13 +5,10 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.learn.skill.spring.flux.task.tracker.entity.User;
-import ru.learn.skill.spring.flux.task.tracker.exception.EntityNotFoundException;
 import ru.learn.skill.spring.flux.task.tracker.mapper.UserMapper;
 import ru.learn.skill.spring.flux.task.tracker.reposotory.UserRepository;
 import ru.learn.skill.spring.flux.task.tracker.web.model.request.UserRequest;
 import ru.learn.skill.spring.flux.task.tracker.web.model.response.UserResponse;
-
-import static java.text.MessageFormat.format;
 
 @Service
 @RequiredArgsConstructor
@@ -34,10 +31,9 @@ public class UserService {
     }
 
     public Mono<UserResponse> update(String id, UserRequest request) {
-        final User existedUser = userRepository.findById(id).blockOptional()
-                .orElseThrow(() -> new EntityNotFoundException(format("User with id={0} not found", id)));
-        User updatedUser = userMapper.toUpdatedUser(existedUser, request);
-        return userMapper.toMonoResponse(userRepository.save(updatedUser));
+        return userMapper.toMonoResponse(userRepository.findById(id)
+                .flatMap(userForUpdate ->
+                        userRepository.save(userMapper.toUpdatedUser(userForUpdate, request))));
     }
 
     public Mono<Void> deleteById(String id) {
