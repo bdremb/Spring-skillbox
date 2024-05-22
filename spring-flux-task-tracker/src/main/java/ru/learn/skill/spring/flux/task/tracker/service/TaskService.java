@@ -26,7 +26,6 @@ public class TaskService {
     private final UserRepository userRepository;
     private final TaskMapper taskMapper;
 
-
     public Flux<TaskResponse> findAll() {
         return taskMapper.toFluxResponse(
                 Mono.zip(
@@ -38,7 +37,7 @@ public class TaskService {
                             .map(task -> taskMapper.toTask(task, data.getT2()))
                             .toList());
                 }).flatMapMany(Flux::fromIterable)
-        );
+        ).onErrorResume(e -> Mono.just(new TaskResponse()));
     }
 
     public Mono<TaskResponse> create(TaskRequest request) {
@@ -50,9 +49,8 @@ public class TaskService {
                 Mono.zip(
                         taskRepository.save(createdTask),
                         userRepository.findAllById(specificUserIds).collectList()
-                ).flatMap(data ->
-                        Mono.just(taskMapper.toTask(data.getT1(), data.getT2())))
-        );
+                ).map(data -> taskMapper.toTask(data.getT1(), data.getT2()))
+        ).onErrorResume(e -> Mono.just(new TaskResponse()));
     }
 
     public Mono<TaskResponse> findById(String id) {
@@ -60,9 +58,8 @@ public class TaskService {
                 Mono.zip(
                         taskRepository.findById(id),
                         userRepository.findAll().collectList()
-                ).flatMap(data ->
-                        Mono.just(taskMapper.toTask(data.getT1(), data.getT2())))
-        );
+                ).map(data -> taskMapper.toTask(data.getT1(), data.getT2()))
+        ).onErrorResume(e -> Mono.just(new TaskResponse()));
     }
 
     public Mono<TaskResponse> update(String id, TaskRequest request) {
@@ -72,10 +69,9 @@ public class TaskService {
                             final Mono<Task> savedTask = taskRepository.save(taskMapper.toUpdatedTask(taskForUpdate, request));
                             final Mono<List<User>> allMonoUsers = userRepository.findAll().collectList();
                             return Mono.zip(savedTask, allMonoUsers)
-                                    .flatMap(data1 ->
-                                            Mono.just(taskMapper.toTask(data1.getT1(), data1.getT2())));
+                                    .map(data -> taskMapper.toTask(data.getT1(), data.getT2()));
                         })
-        );
+        ).onErrorResume(e -> Mono.just(new TaskResponse()));
     }
 
     public Mono<TaskResponse> addObserver(String id, String observerId) {
@@ -87,11 +83,12 @@ public class TaskService {
                                     taskRepository.save(updatedTask),
                                     userRepository.findAll().collectList(),
                                     userRepository.findById(observerId)
-                            ).flatMap(data -> {
+                            ).map(data -> {
                                 data.getT3();
-                                return Mono.just(taskMapper.toTask(data.getT1(), data.getT2()));
+                                return taskMapper.toTask(data.getT1(), data.getT2());
                             });
-                        }));
+                        })
+        ).onErrorResume(e -> Mono.just(new TaskResponse()));
     }
 
     public Mono<Void> deleteById(String id) {
