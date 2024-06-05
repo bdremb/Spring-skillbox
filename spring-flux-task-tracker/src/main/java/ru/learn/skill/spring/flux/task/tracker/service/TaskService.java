@@ -28,7 +28,7 @@ public class TaskService {
     private final UserRepository userRepository;
     private final TaskMapper taskMapper;
 
-    public Flux<TaskResponse> findAll() {
+    public Flux<TaskResponse> findAllTasks() {
         return taskMapper.toFluxResponse(
                 Mono.zip(
                         taskRepository.findAll().collectList(),
@@ -40,6 +40,12 @@ public class TaskService {
                             .toList());
                 }).flatMapMany(Flux::fromIterable)
         ).onErrorResume(e -> Mono.just(new TaskResponse()));
+    }
+
+    public Flux<TaskResponse> findAll() {
+        return taskRepository.findAll()
+                .flatMap(task -> findById(task.getId()))
+                .onErrorResume(e -> Mono.just(new TaskResponse()));
     }
 
     public Mono<TaskResponse> create(TaskRequest request) {
