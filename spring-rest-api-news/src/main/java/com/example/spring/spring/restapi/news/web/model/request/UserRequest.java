@@ -16,4 +16,9 @@ public class UserRequest {
     @NotNull
     @Length(max = 255, min = 2)
     private String name;
+
+    @NotBlank
+    @NotNull
+    @Length(max = 255, min = 2)
+    private String password;
 }
