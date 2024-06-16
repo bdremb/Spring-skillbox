@@ -29,7 +29,7 @@ public class Role {
     private RoleType authority;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "username")
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private User user;

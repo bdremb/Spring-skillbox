@@ -37,7 +37,7 @@ public abstract class AbstractService {
     }
 
     public User getUserOrFail(String userName) {
-        return getAggregateRepository().getUserRepository().findByName(userName)
+        return getAggregateRepository().getUserRepository().findByUsername(userName)
                 .orElseThrow(() -> new EntityNotFoundException(format("User with name={0} not found", userName)));
     }
 

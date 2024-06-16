@@ -52,7 +52,7 @@ public abstract class NewsItemMapperDelegate implements NewsItemMapper {
 
     private NewsItemResponse toSimpleResponse(NewsItem model) {
         NewsItemResponse  response = new NewsItemResponse();
-        response.setUserName(model.getUser().getName());
+        response.setUserName(model.getUser().getUsername());
         response.setId(model.getId());
         response.setText(model.getText());
         response.setCreatedAt(model.getCreatedAt());

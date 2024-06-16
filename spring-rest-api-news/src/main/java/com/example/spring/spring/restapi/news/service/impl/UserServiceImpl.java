@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -34,8 +35,11 @@ public class UserServiceImpl extends AbstractService implements UserService {
 
     @Override
     public UserResponse create(UserRequest request, RoleType roleType) {
-        User user = userMapper.toModel(request, Role.from(roleType));
+        Role role = Role.from(roleType);
+        User user = userMapper.toModel(request);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRoles(Collections.singletonList(role));
+        role.setUser(user);
         return userMapper.toResponse(aggregateRepository.getUserRepository().saveAndFlush(user));
     }
 
@@ -56,7 +60,7 @@ public class UserServiceImpl extends AbstractService implements UserService {
     }
 
     public User findByUserByName(String username) {
-        return aggregateRepository.getUserRepository().findByName(username)
+        return aggregateRepository.getUserRepository().findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Username not found"));
     }
 }

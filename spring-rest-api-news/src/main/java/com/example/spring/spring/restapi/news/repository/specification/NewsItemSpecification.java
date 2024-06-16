@@ -29,7 +29,7 @@ public interface NewsItemSpecification {
             if (userName == null) {
                 return null;
             }
-            return criteriaBuilder.equal(root.get(NewsItem.Fields.user).get(User.Fields.name), userName);
+            return criteriaBuilder.equal(root.get(NewsItem.Fields.user).get(User.Fields.username), userName);
         };
     }
 

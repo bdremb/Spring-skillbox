@@ -34,8 +34,7 @@ public class SecurityConfiguration {
             UserDetailsService userDetailsService,
             PasswordEncoder passwordEncoder
     ) throws Exception {
-        final AuthenticationManagerBuilder authenticationManagerBuilder =
-                http.getSharedObject(AuthenticationManagerBuilder.class);
+        final AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
         authenticationManagerBuilder.userDetailsService(userDetailsService);
 
         var authProvider = new DaoAuthenticationProvider(passwordEncoder);
@@ -49,8 +48,9 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
         http.authorizeHttpRequests(
                         auth -> auth.requestMatchers("/api/v1/users/**")
-                                .hasAnyRole("USER", "ADMIN","MODERATOR")
-                                .requestMatchers("/api/v1/news-items/**").hasAnyRole("ADMIN")
+                                .hasAnyRole("USER", "ADMIN", "MODERATOR")
+                                .requestMatchers("/api/v1/news-items/**")
+                                .hasAnyRole("ADMIN")
                                 .requestMatchers("/api/v1/public/**").permitAll()
                                 .anyRequest().authenticated()
                 )
