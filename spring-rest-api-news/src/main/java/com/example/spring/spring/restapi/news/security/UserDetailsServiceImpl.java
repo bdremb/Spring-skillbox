@@ -1,6 +1,6 @@
 package com.example.spring.spring.restapi.news.security;
 
-import com.example.spring.spring.restapi.news.service.UserService;
+import com.example.spring.spring.restapi.news.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -11,11 +11,12 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private final UserService userService;
+    private final UserRepository repository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return new AppUserPrincipal(userService.findByUserByName(username));
+        return new AppUserPrincipal(repository.findUserByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Username not found")));
     }
 
 }

@@ -11,8 +11,10 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -20,8 +22,12 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
-import static java.util.Objects.isNull;
+import static com.example.spring.spring.restapi.news.model.RoleType.ROLE_ADMIN;
+import static com.example.spring.spring.restapi.news.model.RoleType.ROLE_MODERATOR;
+import static java.util.stream.Collectors.toSet;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.web.servlet.HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE;
 
 @Slf4j
@@ -41,7 +47,7 @@ public class OwnerVerificationAspect {
         final Pair<Long, String> entityIdUserName = getRequestedEntityIdUserName(annotation);
         final EntityType entityType = annotation.entityType();
         if (isNotUserNameMatched(entityIdUserName, entityType)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+            return ResponseEntity.status(FORBIDDEN)
                     .body(ErrorResponse.builder()
                             .errorMessage(String.format(
                                     "Forbidden request. User with name = %s is not owner of the %s with id=%d",
@@ -57,10 +63,24 @@ public class OwnerVerificationAspect {
         final Pair<Long, Long> entityIdUserId = getEntityIdUserId(entityIdUserNamePair);
         switch (entityType) {
             case NEWS -> {
-                return isNull(aggregateRepository.getNewsItemRepository().findByIdAndUserId(entityIdUserId.getLeft(), entityIdUserId.getRight()));
+                return aggregateRepository.getNewsItemRepository()
+                        .findByIdAndUserId(entityIdUserId.getLeft(), entityIdUserId.getRight())
+                        .isEmpty();
             }
             case COMMENT -> {
-                return isNull(aggregateRepository.getCommentRepository().findByIdAndUserId(entityIdUserId.getLeft(), entityIdUserId.getRight()));
+                return aggregateRepository.getCommentRepository()
+                        .findByIdAndUserId(entityIdUserId.getLeft(), entityIdUserId.getRight())
+                        .isEmpty();
+            }
+            case USER -> {
+                final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                final Set<String> roles = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(toSet());
+                if (roles.contains(ROLE_ADMIN.name()) || roles.contains(ROLE_MODERATOR.name())) {
+                    return false;
+                }
+                return aggregateRepository.getUserRepository()
+                        .findUserByIdAndUsername(entityIdUserId.getLeft(), authentication.getName())
+                        .isEmpty();
             }
             default -> {
                 return true;
@@ -72,7 +92,7 @@ public class OwnerVerificationAspect {
         String userName = entityIdUserNamePair.getRight();
         return Pair.of(
                 entityIdUserNamePair.getKey(),
-                aggregateRepository.getUserRepository().findByName(userName)
+                aggregateRepository.getUserRepository().findByUsername(userName)
                         .orElseThrow(() -> new EntityNotFoundException(String.format("User with name=%s not found", userName)))
                         .getId()
         );
@@ -80,12 +100,12 @@ public class OwnerVerificationAspect {
 
     private Pair<Long, String> getRequestedEntityIdUserName(OwnerVerification annotation) {
         RequestAttributes requestAttributes = Objects.requireNonNull(RequestContextHolder.getRequestAttributes());
+        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
         Map<String, String> pathVariables = (Map<String, String>) request.getAttribute(URI_TEMPLATE_VARIABLES_ATTRIBUTE);
         final Long entityId = Long.valueOf(pathVariables.get(annotation.pathVariableIdName()));
-        final String userName = pathVariables.get(annotation.pathVariableName());
-        return Pair.of(entityId, userName);
+        return Pair.of(entityId, authentication.getName());
     }
 
 }

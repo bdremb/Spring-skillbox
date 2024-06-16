@@ -64,19 +64,18 @@ public class NewsController {
         return ResponseEntity.status(CREATED).body(newsService.create(userName, request));
     }
 
-    @PutMapping("/{id}/user/{userName}")
+    @PutMapping("/{id}")
     @OwnerVerification(entityType = EntityType.NEWS)
     public ResponseEntity<NewsItemResponse> update(
             @PathVariable("id") Long newsItemId,
-            @PathVariable String userName,
             @RequestBody @Valid NewsItemRequest request
     ) {
         return ResponseEntity.ok(newsService.update(newsItemId, request));
     }
 
-    @DeleteMapping("/{id}/user/{userName}")
+    @DeleteMapping("/{id}")
     @OwnerVerification(entityType = EntityType.NEWS)
-    public ResponseEntity<Void> delete(@PathVariable Long id, @PathVariable String userName) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         newsService.deleteById(id);
         return ResponseEntity.noContent().build();
     }

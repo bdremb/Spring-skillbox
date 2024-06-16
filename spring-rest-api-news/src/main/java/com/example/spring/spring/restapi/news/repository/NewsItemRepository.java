@@ -17,7 +17,7 @@ public interface NewsItemRepository extends JpaRepository<NewsItem, Long>, JpaSp
     @EntityGraph(attributePaths = {"comments", "user", "category"})
     Optional<NewsItem> findById(Long id);
 
-    NewsItem findByIdAndUserId(Long id, Long userId);
+    Optional<NewsItem> findByIdAndUserId(Long id, Long userId);
 
     @Override
     @EntityGraph(attributePaths = {"user", "category"})

@@ -9,8 +9,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,7 +35,7 @@ public class UserController {
     @GetMapping("/{id}")
     @OwnerVerification(entityType = EntityType.USER)
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER','ROLE_MODERATOR')")
-    public ResponseEntity<UserResponse> findById(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<UserResponse> findById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.findById(id));
     }
 
@@ -46,8 +44,7 @@ public class UserController {
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER','ROLE_MODERATOR')")
     public ResponseEntity<UserResponse> update(
             @PathVariable("id") Long userId,
-            @RequestBody @Valid UserRequest request,
-            @AuthenticationPrincipal UserDetails userDetails
+            @RequestBody @Valid UserRequest request
     ) {
         return ResponseEntity.ok(userService.update(userId, request));
     }
@@ -55,7 +52,7 @@ public class UserController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER','ROLE_MODERATOR')")
     @OwnerVerification(entityType = EntityType.USER)
-    public ResponseEntity<Void> delete(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         userService.deleteById(id);
         return ResponseEntity.noContent().build();
     }

@@ -44,11 +44,10 @@ public class CommentController {
         return ResponseEntity.status(CREATED).body(commentService.create(userName, request));
     }
 
-    @PutMapping("/{id}/user/{userName}")
+    @PutMapping("/{id}")
     @OwnerVerification(entityType = EntityType.COMMENT)
     public ResponseEntity<CommentResponse> update(
             @PathVariable("id") Long commentId,
-            @PathVariable String userName,
             @RequestBody @Valid CommentRequest request
     ) {
         return ResponseEntity.ok(commentService.update(commentId, request));

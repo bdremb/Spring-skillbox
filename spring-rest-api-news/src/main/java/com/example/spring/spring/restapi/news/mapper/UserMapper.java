@@ -17,7 +17,7 @@ public interface UserMapper {
 
     User toModel(UserRequest request);
 
-       User toModel(Long id, UserRequest request);
+    User toModel(Long id, UserRequest request);
 
     UserResponse toResponse(User model);
 

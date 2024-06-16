@@ -41,7 +41,7 @@ public class User {
     @Builder.Default
     private List<NewsItem> newsItems = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "id", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @Builder.Default
