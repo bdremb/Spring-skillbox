@@ -1,5 +1,6 @@
 package com.example.spring.spring.restapi.news.web.controller.v1;
 
+import com.example.spring.spring.restapi.news.aop.Action;
 import com.example.spring.spring.restapi.news.aop.EntityType;
 import com.example.spring.spring.restapi.news.aop.OwnerVerification;
 import com.example.spring.spring.restapi.news.service.NewsService;
@@ -12,6 +13,9 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,6 +38,7 @@ public class NewsController {
     private final NewsService newsService;
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER','ROLE_MODERATOR')")
     public ResponseEntity<List<NewsItemResponse>> findAll(
             @RequestParam @Min(1) @Max(Integer.MAX_VALUE) @NotNull Integer pageSize,
             @RequestParam @Min(0) @Max(Integer.MAX_VALUE) @NotNull Integer pageNumber,
@@ -55,18 +60,22 @@ public class NewsController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER','ROLE_MODERATOR')")
     public ResponseEntity<NewsItemResponse> findById(@PathVariable Long id) {
         return ResponseEntity.ok(newsService.findById(id));
     }
 
-    @PostMapping("/user/{userName}")
-    public ResponseEntity<NewsItemResponse> create(@PathVariable String userName, @RequestBody @Valid NewsItemRequest request) {
-        return ResponseEntity.status(CREATED).body(newsService.create(userName, request));
+    @PostMapping
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER','ROLE_MODERATOR')")
+    public ResponseEntity<NewsItemResponse> create(@AuthenticationPrincipal UserDetails userDetails, @RequestBody @Valid NewsItemRequest request) {
+        return ResponseEntity.status(CREATED).body(newsService.create(userDetails.getUsername(), request));
     }
 
     @PutMapping("/{id}")
-    @OwnerVerification(entityType = EntityType.NEWS)
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER','ROLE_MODERATOR')")
+    @OwnerVerification(entityType = EntityType.NEWS, action = Action.UPDATE)
     public ResponseEntity<NewsItemResponse> update(
+            @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable("id") Long newsItemId,
             @RequestBody @Valid NewsItemRequest request
     ) {
@@ -74,8 +83,9 @@ public class NewsController {
     }
 
     @DeleteMapping("/{id}")
-    @OwnerVerification(entityType = EntityType.NEWS)
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    @OwnerVerification(entityType = EntityType.NEWS, action = Action.DELETE)
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER','ROLE_MODERATOR')")
+    public ResponseEntity<Void> delete(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long id) {
         newsService.deleteById(id);
         return ResponseEntity.noContent().build();
     }

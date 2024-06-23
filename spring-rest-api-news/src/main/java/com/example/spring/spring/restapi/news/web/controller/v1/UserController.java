@@ -1,5 +1,6 @@
 package com.example.spring.spring.restapi.news.web.controller.v1;
 
+import com.example.spring.spring.restapi.news.aop.Action;
 import com.example.spring.spring.restapi.news.aop.EntityType;
 import com.example.spring.spring.restapi.news.aop.OwnerVerification;
 import com.example.spring.spring.restapi.news.service.UserService;
@@ -9,6 +10,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,16 +36,17 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    @OwnerVerification(entityType = EntityType.USER)
+    @OwnerVerification(entityType = EntityType.USER, action = Action.READ)
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER','ROLE_MODERATOR')")
-    public ResponseEntity<UserResponse> findById(@PathVariable Long id) {
+    public ResponseEntity<UserResponse> findById(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long id) {
         return ResponseEntity.ok(userService.findById(id));
     }
 
     @PutMapping("/{id}")
-    @OwnerVerification(entityType = EntityType.USER)
+    @OwnerVerification(entityType = EntityType.USER, action = Action.UPDATE)
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER','ROLE_MODERATOR')")
     public ResponseEntity<UserResponse> update(
+            @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable("id") Long userId,
             @RequestBody @Valid UserRequest request
     ) {
@@ -51,9 +55,10 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER','ROLE_MODERATOR')")
-    @OwnerVerification(entityType = EntityType.USER)
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    @OwnerVerification(entityType = EntityType.USER, action = Action.DELETE)
+    public ResponseEntity<Void> delete(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long id) {
         userService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+
 }

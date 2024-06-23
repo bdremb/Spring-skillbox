@@ -12,4 +12,6 @@ public @interface OwnerVerification {
     EntityType entityType();
 
     String pathVariableIdName() default "id";
+
+    Action action();
 }
