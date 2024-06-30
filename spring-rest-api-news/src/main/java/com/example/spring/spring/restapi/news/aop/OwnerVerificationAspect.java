@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static com.example.spring.spring.restapi.news.aop.Action.DELETE;
+import static com.example.spring.spring.restapi.news.aop.Action.UPDATE;
 import static com.example.spring.spring.restapi.news.model.RoleType.ROLE_ADMIN;
 import static com.example.spring.spring.restapi.news.model.RoleType.ROLE_MODERATOR;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
@@ -61,42 +63,41 @@ public class OwnerVerificationAspect {
         return joinPoint.proceed();
     }
 
-    //TODO need to refactoring
     protected boolean isNotUserNameMatched(ObjectInfo objectInfo, EntityType entityType, Action action) {
         final Pair<Long, Long> entityIdUserId = getEntityIdUserId(objectInfo);
-        switch (entityType) {
+        return switch (entityType) {
             case NEWS -> {
-                if (action != Action.UPDATE
-                        && (objectInfo.roles.contains(ROLE_ADMIN.name()) || objectInfo.roles.contains(ROLE_MODERATOR.name()))) {
-                    return false;
+                if (action != UPDATE && roleHasPermission(objectInfo)) {
+                    yield false;
                 }
-                return aggregateRepository.getNewsItemRepository()
+                yield aggregateRepository.getNewsItemRepository()
                         .findByIdAndUserId(entityIdUserId.getLeft(), entityIdUserId.getRight())
                         .isEmpty();
             }
             case COMMENT -> {
-                if (action != Action.UPDATE && (objectInfo.roles.contains(ROLE_ADMIN.name()) || objectInfo.roles.contains(ROLE_MODERATOR.name()))) {
-                    return false;
+                if (action != UPDATE && roleHasPermission(objectInfo)) {
+                    yield false;
                 }
-                if (action == Action.DELETE && (objectInfo.roles.contains(ROLE_ADMIN.name()) || objectInfo.roles.contains(ROLE_MODERATOR.name()))) {
-                    return false;
+                if (action == DELETE && roleHasPermission(objectInfo)) {
+                    yield false;
                 }
-                return aggregateRepository.getCommentRepository()
+                yield aggregateRepository.getCommentRepository()
                         .findByIdAndUserId(entityIdUserId.getLeft(), entityIdUserId.getRight())
                         .isEmpty();
             }
             case USER -> {
-                if (objectInfo.roles.contains(ROLE_ADMIN.name()) || objectInfo.roles.contains(ROLE_MODERATOR.name())) {
-                    return false;
+                if (roleHasPermission(objectInfo)) {
+                    yield false;
                 }
-                return aggregateRepository.getUserRepository()
+                yield aggregateRepository.getUserRepository()
                         .findUserByIdAndUsername(entityIdUserId.getLeft(), objectInfo.getUsername())
                         .isEmpty();
             }
-            default -> {
-                return true;
-            }
-        }
+        };
+    }
+
+    private boolean roleHasPermission(ObjectInfo objectInfo) {
+        return objectInfo.roles.contains(ROLE_ADMIN.name()) || objectInfo.roles.contains(ROLE_MODERATOR.name());
     }
 
     private Pair<Long, Long> getEntityIdUserId(ObjectInfo objectInfo) {

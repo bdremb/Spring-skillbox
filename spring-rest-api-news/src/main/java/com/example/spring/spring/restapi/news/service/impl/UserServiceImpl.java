@@ -1,5 +1,6 @@
 package com.example.spring.spring.restapi.news.service.impl;
 
+import com.example.spring.spring.restapi.news.exception.NameNotUniqueException;
 import com.example.spring.spring.restapi.news.mapper.UserMapper;
 import com.example.spring.spring.restapi.news.model.Role;
 import com.example.spring.spring.restapi.news.model.RoleType;
@@ -35,6 +36,9 @@ public class UserServiceImpl extends AbstractService implements UserService {
 
     @Override
     public UserResponse create(UserRequest request, RoleType roleType) {
+        if (isUserNameAlreadyExists(request.getUsername())) {
+            throw new NameNotUniqueException("User name already exists");
+        }
         Role role = Role.from(roleType);
         User user = userMapper.toModel(request);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -63,4 +67,9 @@ public class UserServiceImpl extends AbstractService implements UserService {
         return aggregateRepository.getUserRepository().findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Username not found"));
     }
+
+    private boolean isUserNameAlreadyExists(String username) {
+        return aggregateRepository.getUserRepository().findByUsername(username).isPresent();
+    }
+
 }

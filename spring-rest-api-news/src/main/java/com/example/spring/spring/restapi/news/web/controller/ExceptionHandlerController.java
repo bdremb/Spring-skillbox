@@ -1,6 +1,7 @@
 package com.example.spring.spring.restapi.news.web.controller;
 
 import com.example.spring.spring.restapi.news.exception.EntityNotFoundException;
+import com.example.spring.spring.restapi.news.exception.NameNotUniqueException;
 import com.example.spring.spring.restapi.news.web.model.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -21,6 +22,13 @@ public class ExceptionHandlerController {
     public ResponseEntity<ErrorResponse> notFound(EntityNotFoundException ex) {
         log.error("Ошибка при попытке получить сущность", ex);
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponse(ex.getLocalizedMessage()));
+    }
+
+    @ExceptionHandler(NameNotUniqueException.class)
+    public ResponseEntity<ErrorResponse> notUniqueName(NameNotUniqueException ex) {
+        log.error("Ошибка при попытке создать существующее имя сущности", ex);
+        return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ErrorResponse(ex.getLocalizedMessage()));
     }
 
