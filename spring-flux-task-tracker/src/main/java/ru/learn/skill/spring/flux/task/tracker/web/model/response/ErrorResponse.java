@@ -5,16 +5,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-public class UserResponse {
-    private String id;
-    private String username;
-    private String password;
-    private List<RoleResponse> roles;
-    private String email;
+public class ErrorResponse {
+    private String errorMessage;
 }
